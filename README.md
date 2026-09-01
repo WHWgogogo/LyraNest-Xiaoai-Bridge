@@ -86,12 +86,44 @@ docker run -d --name lyranest-xiaoai-bridge \
 
 ## Docker Compose 部署
 
-下载 [docker-compose.yml](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml) 到单独目录，并把 Docker 镜像归档放在同一目录：
+下面是完整的 Compose 配置。将它保存为 `docker-compose.yml`，也可以直接下载 [docker-compose.yml](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml)。
+
+```yaml
+services:
+  xiaoai-bridge:
+    image: lyranest-xiaoai-bridge:1.0.1
+    container_name: lyranest-xiaoai-bridge
+    restart: unless-stopped
+    mem_limit: 128m
+    environment:
+      BRIDGE_PORT: "8090"
+      BRIDGE_DATA_DIR: /data
+      BRIDGE_ACCESS_TOKEN: "${BRIDGE_ACCESS_TOKEN:-}"
+      BRIDGE_RUNTIME: docker
+      TZ: "${TZ:-Asia/Shanghai}"
+    ports:
+      - "${BRIDGE_HOST_PORT:-18090}:8090"
+    volumes:
+      - "${BRIDGE_DATA_DIR:-/vol1/1000/lyranest-xiaoai-bridge/data}:/data:rw"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:8090/healthz').then((response) =>
+          process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+```
+
+下载 Docker 镜像归档并导入：
 
 ```bash
 mkdir -p lyranest-xiaoai-bridge
 cd lyranest-xiaoai-bridge
-curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml
 curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
 docker load -i LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
 ```
