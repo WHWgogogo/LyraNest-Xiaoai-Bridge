@@ -34,6 +34,7 @@ LyraNest（律巢）是一套面向个人 NAS、家庭服务器与局域网音�
 | --- | --- | --- |
 | `LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk` | [下载 FPK](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk) | 飞牛 fnOS 原生应用安装包 |
 | `LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar` | [下载 Docker 镜像](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar) | Linux AMD64 / x86_64 离线 Docker 部署 |
+| `docker-compose.yml` | [下载 Compose 文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml) | Docker Compose 部署配置 |
 | `SHA256SUMS-1.0.1.txt` | [下载校验文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/SHA256SUMS-1.0.1.txt) | 校验下载完整性 |
 
 ## 它能做什么
@@ -82,6 +83,43 @@ docker run -d --name lyranest-xiaoai-bridge \
 ```
 
 然后在浏览器打开 `http://<NAS_IP>:18090`，完成首次设置即可。Docker 方式不使用飞牛统一网关。
+
+## Docker Compose 部署
+
+下载 [docker-compose.yml](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml) 到单独目录，并把 Docker 镜像归档放在同一目录：
+
+```bash
+mkdir -p lyranest-xiaoai-bridge
+cd lyranest-xiaoai-bridge
+curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml
+curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
+docker load -i LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
+```
+
+启动服务：
+
+```bash
+docker compose up -d
+```
+
+默认使用 `18090` 端口和 `/vol1/1000/lyranest-xiaoai-bridge/data` 数据目录。需要调整端口、数据目录或时区时，在执行命令前设置环境变量：
+
+```bash
+export BRIDGE_HOST_PORT=18091
+export BRIDGE_DATA_DIR=/srv/lyranest-xiaoai-bridge/data
+export TZ=Asia/Shanghai
+docker compose up -d
+```
+
+也可以在 Compose 文件所在目录创建 `.env`：
+
+```dotenv
+BRIDGE_HOST_PORT=18090
+BRIDGE_DATA_DIR=/vol1/1000/lyranest-xiaoai-bridge/data
+TZ=Asia/Shanghai
+```
+
+首次打开 `http://<NAS_IP>:<BRIDGE_HOST_PORT>` 时创建 6 位数字访问口令。需要无人值守部署时，再在 `.env` 中增加 `BRIDGE_ACCESS_TOKEN`。
 
 ## 首次配置
 

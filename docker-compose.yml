@@ -1,0 +1,28 @@
+services:
+  xiaoai-bridge:
+    image: lyranest-xiaoai-bridge:1.0.1
+    container_name: lyranest-xiaoai-bridge
+    restart: unless-stopped
+    mem_limit: 128m
+    environment:
+      BRIDGE_PORT: "8090"
+      BRIDGE_DATA_DIR: /data
+      BRIDGE_ACCESS_TOKEN: "${BRIDGE_ACCESS_TOKEN:-}"
+      BRIDGE_RUNTIME: docker
+      TZ: "${TZ:-Asia/Shanghai}"
+    ports:
+      - "${BRIDGE_HOST_PORT:-18090}:8090"
+    volumes:
+      - "${BRIDGE_DATA_DIR:-/vol1/1000/lyranest-xiaoai-bridge/data}:/data:rw"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:8090/healthz').then((response) =>
+          process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
