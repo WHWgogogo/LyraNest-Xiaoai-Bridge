@@ -1,0 +1,2 @@
+8dcc9c737fb3fb83541fc9c11eee54cc3a18f4f9bde3698916ef177adfe880c1  LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk
+a710da9432a59f4c20761a1d9a4eef9e3e08dbfdaa83a8c1b256943e6ee1f8b5  LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar

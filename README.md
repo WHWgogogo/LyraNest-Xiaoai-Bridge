@@ -12,27 +12,27 @@ LyraNest XiaoAI Bridge 是 [LyraNest](https://lyranest.dpdns.org/) 的独立小�
 | --- | --- |
 | LyraNest 项目主页 | [lyranest.dpdns.org](https://lyranest.dpdns.org/) |
 | Bridge 发布仓库 | [WHWgogogo/LyraNest-Xiaomi-Bridge](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge) |
-| 当前制品目录 | [releases/1.0.0](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/tree/main/releases/1.0.0) |
-| 校验文件 | [SHA256SUMS-1.0.0.txt](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.0/SHA256SUMS-1.0.0.txt) |
+| 当前制品目录 | [releases/1.0.1](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/tree/main/releases/1.0.1) |
+| 校验文件 | [SHA256SUMS-1.0.1.txt](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.1/SHA256SUMS-1.0.1.txt) |
 
 LyraNest 主项目负责曲库、账号、音乐检索与流媒体服务；Bridge 只负责小米账号授权、音箱发现、语音指令处理和向音箱下发播放控制。音频由音箱直接访问 LyraNest，不经过 Bridge 中转。
 
-## 版本 1.0.0
+## 版本 1.0.1
 
 发布于 2026 年 9 月 1 日。
 
 | 制品 | 下载 | 用途 |
 | --- | --- | --- |
-| 飞牛 FPK | [LyraNest-XiaoAI-Bridge-1.0.0-fnos-native.fpk](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.0/LyraNest-XiaoAI-Bridge-1.0.0-fnos-native.fpk) | 飞牛应用中心原生安装包 |
-| Docker 镜像 | [LyraNest-XiaoAI-Bridge-1.0.0-docker-image-linux-amd64.tar](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.0/LyraNest-XiaoAI-Bridge-1.0.0-docker-image-linux-amd64.tar) | Linux amd64 离线 Docker 镜像 |
-| SHA-256 | [SHA256SUMS-1.0.0.txt](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.0/SHA256SUMS-1.0.0.txt) | FPK 与 Docker 镜像完整性校验 |
+| 飞牛 FPK | [LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.1/LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk) | 飞牛应用中心原生安装包 |
+| Docker 镜像 | [LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.1/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar) | Linux amd64 离线 Docker 镜像 |
+| SHA-256 | [SHA256SUMS-1.0.1.txt](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/raw/refs/heads/main/releases/1.0.1/SHA256SUMS-1.0.1.txt) | FPK 与 Docker 镜像完整性校验 |
 
 ### Docker 离线部署
 
 下载镜像后导入：
 
 ```bash
-docker load -i LyraNest-XiaoAI-Bridge-1.0.0-docker-image-linux-amd64.tar
+docker load -i LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
 ```
 
 启动独立 Bridge 容器：
@@ -43,7 +43,7 @@ docker run -d --name lyranest-xiaoai-bridge \
   -p 18090:8090 \
   -v /vol1/1000/lyranest-xiaoai-bridge/data:/data \
   -e TZ=Asia/Shanghai \
-  lyranest-xiaoai-bridge:1.0.0
+  lyranest-xiaoai-bridge:1.0.1
 ```
 
 随后访问 `http://<NAS_IP>:18090`。首次进入创建 6 位数字访问口令，登录小米账号，选择音箱，填写 LyraNest 服务地址并保存即可。
@@ -55,7 +55,7 @@ docker run -d --name lyranest-xiaoai-bridge \
 3. 从飞牛桌面打开 Bridge，或通过 `http://<NAS_IP>:<端口>` 访问。
 4. 在 Bridge 中完成小米登录、音箱选择和 LyraNest 连接。
 
-如果已安装旧的同版本 `1.0.0` 包，飞牛可能不会将其识别为升级包。请使用覆盖安装能力，或先卸载旧包再安装当前制品。
+`1.0.1` 优化了管理台布局，并在公开健康检查中返回当前版本。飞牛会将旧版本识别为可升级包。
 
 ## 使用前提
 
@@ -70,14 +70,14 @@ Bridge 支持小米账号密码登录，并在小米要求时接收短信或邮�
 Linux、macOS：
 
 ```bash
-sha256sum -c SHA256SUMS-1.0.0.txt
+sha256sum -c SHA256SUMS-1.0.1.txt
 ```
 
 Windows PowerShell：
 
 ```powershell
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.0-fnos-native.fpk -Algorithm SHA256
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.0-docker-image-linux-amd64.tar -Algorithm SHA256
+Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk -Algorithm SHA256
+Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar -Algorithm SHA256
 ```
 
 ## 说明
