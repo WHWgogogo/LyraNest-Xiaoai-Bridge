@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/github/v/release/WHWgogogo/LyraNest-Xiaomi-Bridge?display_name=tag&label=Release" alt="Latest Release" /></a>
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/badge/Release-1.0.6-f95f4d" alt="Release 1.0.6" /></a>
   <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/badge/Platform-fnOS%20%7C%20QNAP%20%7C%20Synology%20%7C%20UGOS%20%7C%20Docker-4f46e5" alt="Platforms" /></a>
   <a href="https://lyranest.dpdns.org/"><img src="https://img.shields.io/badge/Powered%20by-LyraNest-f95f4d" alt="Powered by LyraNest" /></a>
 </p>
@@ -44,7 +44,6 @@ LyraNest（律巢）是一套面向个人 NAS、家庭服务器与局域网音�
 | `LyraNest-XiaoAI-Bridge-1.0.6-ugnas-arm64.upk` | [下载绿联 ARM64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-ugnas-arm64.upk) | 绿联 UGOS Pro ARM64 设备 |
 | `LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar` | [下载 Docker 镜像](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar) | Linux AMD64 / x86_64 离线 Docker 部署 |
 | `docker-compose.yml` | [下载 Compose 文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml) | Docker Compose 部署配置 |
-| `SHA256SUMS-1.0.6.txt` | [下载校验文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/SHA256SUMS-1.0.6.txt) | 全部制品的 SHA-256 校验 |
 
 ## 1.0.6 更新摘要
 
@@ -216,25 +215,10 @@ TZ=Asia/Shanghai
 - 配置和已加密的小米登录会话保存在数据目录；请不要删除 Docker 数据卷或飞牛应用数据。
 - 管理台口令仅适合可信局域网。请勿将端口直接暴露到互联网；远程使用时建议通过防火墙或带认证的反向代理保护。
 
-## 校验下载
-
-Linux、macOS：
-
-```bash
-sha256sum -c SHA256SUMS-1.0.6.txt
-```
-
-Windows PowerShell：
-
-```powershell
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.6-fnos-native.fpk -Algorithm SHA256
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar -Algorithm SHA256
-```
-
 ## 相关链接
 
 - [LyraNest 官网](https://lyranest.dpdns.org/)
 - [LyraNest 主项目](https://github.com/WHWgogogo/LyraNest)
 - [LyraNest XiaoAI Bridge 最新下载](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest)
 
-> 本仓库提供 LyraNest XiaoAI Bridge 的正式安装包、校验文件和使用说明，不包含完整源代码。
+> 本仓库提供 LyraNest XiaoAI Bridge 的正式安装包和使用说明，不包含完整源代码。
