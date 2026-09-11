@@ -1,6 +1,6 @@
 services:
   xiaoai-bridge:
-    image: lyranest-xiaoai-bridge:1.0.1
+    image: lyranest-xiaoai-bridge:1.0.6
     container_name: lyranest-xiaoai-bridge
     restart: unless-stopped
     mem_limit: 128m

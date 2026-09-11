@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/github/v/release/WHWgogogo/LyraNest-Xiaomi-Bridge?display_name=tag&label=Release" alt="Latest Release" /></a>
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/badge/Platform-fnOS%20%7C%20Docker-4f46e5" alt="Platforms" /></a>
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/badge/Platform-fnOS%20%7C%20QNAP%20%7C%20Synology%20%7C%20UGOS%20%7C%20Docker-4f46e5" alt="Platforms" /></a>
   <a href="https://lyranest.dpdns.org/"><img src="https://img.shields.io/badge/Powered%20by-LyraNest-f95f4d" alt="Powered by LyraNest" /></a>
 </p>
 
@@ -15,6 +15,7 @@
   <a href="https://lyranest.dpdns.org/">LyraNest 官网</a> ·
   <a href="https://github.com/WHWgogogo/LyraNest">LyraNest 主项目</a> ·
   <a href="#飞牛-fnos-安装">飞牛安装</a> ·
+  <a href="#其他-nas-原生安装">其他 NAS 安装</a> ·
   <a href="#docker-离线部署">Docker 部署</a>
 </p>
 
@@ -24,7 +25,7 @@
 
 LyraNest（律巢）是一套面向个人 NAS、家庭服务器与局域网音乐库的自托管音乐服务。LyraNest XiaoAI Bridge 是它的音箱扩展：将一台小爱音箱连接到你的 LyraNest 服务后，就可以用语音搜索并播放自己曲库中的音乐。
 
-当前稳定版本：`1.0.1`
+当前稳定版本：`1.0.6`
 
 ## 下载最新版
 
@@ -32,10 +33,24 @@ LyraNest（律巢）是一套面向个人 NAS、家庭服务器与局域网音�
 
 | 文件 | 下载 | 适用场景 |
 | --- | --- | --- |
-| `LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk` | [下载 FPK](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk) | 飞牛 fnOS 原生应用安装包 |
-| `LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar` | [下载 Docker 镜像](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar) | Linux AMD64 / x86_64 离线 Docker 部署 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-fnos-native.fpk` | [下载 FPK](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-fnos-native.fpk) | 飞牛 fnOS 原生应用安装包，x86/ARM 通用 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-qnap.qpkg` | [下载 QNAP 通用包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap.qpkg) | 威联通 QTS / QuTS hero 通用包 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-qnap-x86_64.qpkg` | [下载 QNAP x86_64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap-x86_64.qpkg) | 威联通 Intel / AMD 设备 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-qnap-arm_64.qpkg` | [下载 QNAP ARM64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap-arm_64.qpkg) | 威联通 ARM64 设备 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-synology.spk` | [下载群晖通用包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology.spk) | 群晖 DSM 通用 SPK |
+| `LyraNest-XiaoAI-Bridge-1.0.6-synology-x86_64.spk` | [下载群晖 x86_64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology-x86_64.spk) | 群晖 Intel / AMD 设备 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-synology-armv8.spk` | [下载群晖 ARMv8 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology-armv8.spk) | 群晖 ARMv8、RTD1296、RTD1619B、Armada37xx |
+| `LyraNest-XiaoAI-Bridge-1.0.6-ugnas-amd64.upk` | [下载绿联 AMD64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-ugnas-amd64.upk) | 绿联 UGOS Pro x86_64 设备 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-ugnas-arm64.upk` | [下载绿联 ARM64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-ugnas-arm64.upk) | 绿联 UGOS Pro ARM64 设备 |
+| `LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar` | [下载 Docker 镜像](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar) | Linux AMD64 / x86_64 离线 Docker 部署 |
 | `docker-compose.yml` | [下载 Compose 文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml) | Docker Compose 部署配置 |
-| `SHA256SUMS-1.0.1.txt` | [下载校验文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/SHA256SUMS-1.0.1.txt) | 校验下载完整性 |
+| `SHA256SUMS-1.0.6.txt` | [下载校验文件](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/SHA256SUMS-1.0.6.txt) | 全部制品的 SHA-256 校验 |
+
+## 1.0.6 更新摘要
+
+- 新增曲库语音点播，支持歌单与曲库之间的智能回退。
+- 优化语音指令切词、标点修剪与暂停、停止等播放控制。
+- 正式提供飞牛、威联通、群晖、绿联和 Docker 的独立安装制品。
 
 ## 它能做什么
 
@@ -55,7 +70,7 @@ LyraNest 负责保存音乐、搜索曲库、管理账号并提供播放地址�
 
 飞牛 NAS 用户推荐安装 FPK：
 
-1. 下载 [LyraNest XiaoAI Bridge 1.0.1 FPK](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk)。
+1. 下载 [LyraNest XiaoAI Bridge 1.0.6 FPK](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-fnos-native.fpk)。
 2. 在飞牛应用中心选择手动安装，上传 FPK 并完成安装。
 3. 在应用设置中选择未被占用的访问端口，默认是 `18090`。
 4. 从飞牛桌面打开应用，首次进入创建 6 位数字访问口令。
@@ -63,12 +78,43 @@ LyraNest 负责保存音乐、搜索曲库、管理账号并提供播放地址�
 
 飞牛桌面入口使用飞牛统一网关；你也可以通过 `http://<飞牛地址>:<端口>` 从局域网访问管理台。
 
+## 其他 NAS 原生安装
+
+### 威联通 QNAP
+
+在 QTS 或 QuTS hero 的 App Center 中启用“允许安装非 QNAP 签名的应用程序”，然后选择本地手动安装：
+
+- Intel / AMD 设备使用 [QNAP x86_64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap-x86_64.qpkg)。
+- ARM64 设备使用 [QNAP ARM64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap-arm_64.qpkg)。
+- 不确定架构时，可尝试 [QNAP 通用包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-qnap.qpkg)。
+
+安装完成后访问 `http://<QNAP_IP>:18090`。QNAP 设备需要可用的 Node.js 20+ 与 Python 3 运行环境。
+
+### 群晖 DSM
+
+在套件中心选择手动安装并上传对应 SPK：
+
+- Intel / AMD 设备使用 [群晖 x86_64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology-x86_64.spk)。
+- ARMv8、RTD1296、RTD1619B、Armada37xx 设备使用 [群晖 ARMv8 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology-armv8.spk)。
+- 不确定架构时，可尝试 [群晖通用包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-synology.spk)。
+
+同名 `.skg` 文件与 `.spk` 内容一致，仅用于需要 SKG 后缀的兼容场景；常规 DSM 手动安装请选择 `.spk`。
+
+### 绿联 UGOS Pro
+
+在绿联私有云应用中心选择本地安装并上传对应 UPK：
+
+- x86_64 设备使用 [绿联 AMD64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-ugnas-amd64.upk)。
+- ARM64 设备使用 [绿联 ARM64 包](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-ugnas-arm64.upk)。
+
+安装后从应用中心打开 LyraNest XiaoAI Bridge，或通过应用配置的 `18090` 端口进入管理台。
+
 ## Docker 离线部署
 
 Docker 镜像适用于 Linux AMD64 / x86_64 设备，与飞牛 FPK 是两种独立的安装方式。下载镜像并导入：
 
 ```bash
-docker load -i LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
+docker load -i LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar
 ```
 
 启动 Bridge：
@@ -79,7 +125,7 @@ docker run -d --name lyranest-xiaoai-bridge \
   -p 18090:8090 \
   -v /vol1/1000/lyranest-xiaoai-bridge/data:/data \
   -e TZ=Asia/Shanghai \
-  lyranest-xiaoai-bridge:1.0.1
+  lyranest-xiaoai-bridge:1.0.6
 ```
 
 然后在浏览器打开 `http://<NAS_IP>:18090`，完成首次设置即可。Docker 方式不使用飞牛统一网关。
@@ -91,7 +137,7 @@ docker run -d --name lyranest-xiaoai-bridge \
 ```yaml
 services:
   xiaoai-bridge:
-    image: lyranest-xiaoai-bridge:1.0.1
+    image: lyranest-xiaoai-bridge:1.0.6
     container_name: lyranest-xiaoai-bridge
     restart: unless-stopped
     mem_limit: 128m
@@ -124,8 +170,8 @@ services:
 ```bash
 mkdir -p lyranest-xiaoai-bridge
 cd lyranest-xiaoai-bridge
-curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
-docker load -i LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar
+curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar
+docker load -i LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar
 ```
 
 启动服务：
@@ -175,14 +221,14 @@ TZ=Asia/Shanghai
 Linux、macOS：
 
 ```bash
-sha256sum -c SHA256SUMS-1.0.1.txt
+sha256sum -c SHA256SUMS-1.0.6.txt
 ```
 
 Windows PowerShell：
 
 ```powershell
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.1-fnos-native.fpk -Algorithm SHA256
-Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.1-docker-image-linux-amd64.tar -Algorithm SHA256
+Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.6-fnos-native.fpk -Algorithm SHA256
+Get-FileHash .\LyraNest-XiaoAI-Bridge-1.0.6-docker-image-linux-amd64.tar -Algorithm SHA256
 ```
 
 ## 相关链接
