@@ -1,4 +1,4 @@
-﻿name: Publish GHCR Image
+name: Publish GHCR Image
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       version:
         description: 'Version to publish'
         required: true
-        default: '1.0.6'
+        default: '1.0.8'
   release:
     types: [published]
 
@@ -28,13 +28,20 @@ jobs:
           fi
 
       - name: Download release tar
+        id: dl
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
-          gh release download "v${VERSION}" --pattern "*docker-image*.tar" --repo "${{ github.repository }}"
+          if gh release download "v${VERSION}" --pattern "*docker-image*.tar" --repo "${{ github.repository }}"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No docker-image tar asset in release v${VERSION}, skipping GHCR push."
+          fi
 
       - name: Load Docker Image
+        if: steps.dl.outputs.found == 'true'
         run: |
           TAR_FILE=$(ls *docker-image*.tar | head -n 1)
           echo "Loading $TAR_FILE"
@@ -42,6 +49,7 @@ jobs:
           docker images
 
       - name: Log in to GHCR
+        if: steps.dl.outputs.found == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -49,6 +57,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag and Push Image
+        if: steps.dl.outputs.found == 'true'
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
           IMAGE_TAG="lyranest-xiaoai-bridge:${VERSION}"
@@ -61,3 +70,4 @@ jobs:
           docker push "${TARGET_IMAGE}:${VERSION}"
           echo "Pushing ${TARGET_IMAGE}:latest..."
           docker push "${TARGET_IMAGE}:latest"
+
