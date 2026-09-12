@@ -1,0 +1,67 @@
+﻿name: Publish GHCR Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish'
+        required: true
+        default: '1.0.6'
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine version
+        id: ver
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download release tar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          gh release download "v${VERSION}" --pattern "*docker-image*.tar" --repo "${{ github.repository }}"
+
+      - name: Load Docker Image
+        run: |
+          TAR_FILE=$(ls *docker-image*.tar | head -n 1)
+          echo "Loading $TAR_FILE"
+          docker load -i "$TAR_FILE"
+          docker images
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and Push Image
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          IMAGE_TAG="lyranest-xiaoai-bridge:${VERSION}"
+          TARGET_IMAGE="ghcr.io/${{ github.repository_owner }}/lyranest-xiaoai-bridge"
+
+          docker tag "$IMAGE_TAG" "${TARGET_IMAGE}:${VERSION}"
+          docker tag "$IMAGE_TAG" "${TARGET_IMAGE}:latest"
+
+          TARGET_LOWER=$(echo "${TARGET_IMAGE}" | tr '[:upper:]' '[:lower:]')
+          docker tag "$IMAGE_TAG" "${TARGET_LOWER}:${VERSION}"
+          docker tag "$IMAGE_TAG" "${TARGET_LOWER}:latest"
+
+          echo "Pushing ${TARGET_LOWER}:${VERSION}..."
+          docker push "${TARGET_LOWER}:${VERSION}"
+          echo "Pushing ${TARGET_LOWER}:latest..."
+          docker push "${TARGET_LOWER}:latest"
