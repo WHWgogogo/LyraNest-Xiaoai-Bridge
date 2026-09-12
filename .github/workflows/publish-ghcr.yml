@@ -52,16 +52,12 @@ jobs:
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
           IMAGE_TAG="lyranest-xiaoai-bridge:${VERSION}"
-          TARGET_IMAGE="ghcr.io/${{ github.repository_owner }}/lyranest-xiaoai-bridge"
+          TARGET_IMAGE="ghcr.io/whwgogogo/lyranest-xiaoai-bridge"
 
           docker tag "$IMAGE_TAG" "${TARGET_IMAGE}:${VERSION}"
           docker tag "$IMAGE_TAG" "${TARGET_IMAGE}:latest"
 
-          TARGET_LOWER=$(echo "${TARGET_IMAGE}" | tr '[:upper:]' '[:lower:]')
-          docker tag "$IMAGE_TAG" "${TARGET_LOWER}:${VERSION}"
-          docker tag "$IMAGE_TAG" "${TARGET_LOWER}:latest"
-
-          echo "Pushing ${TARGET_LOWER}:${VERSION}..."
-          docker push "${TARGET_LOWER}:${VERSION}"
-          echo "Pushing ${TARGET_LOWER}:latest..."
-          docker push "${TARGET_LOWER}:latest"
+          echo "Pushing ${TARGET_IMAGE}:${VERSION}..."
+          docker push "${TARGET_IMAGE}:${VERSION}"
+          echo "Pushing ${TARGET_IMAGE}:latest..."
+          docker push "${TARGET_IMAGE}:latest"
