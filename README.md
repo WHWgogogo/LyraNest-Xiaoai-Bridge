@@ -7,13 +7,13 @@
 <p align="center">为 LyraNest 音乐服务提供小米/小爱音箱语音联动、无缝投送与断点续播的官方桥接扩展。</p>
 
 <p align="center">
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/github/v/release/WHWgogogo/LyraNest-Xiaomi-Bridge?display_name=tag&label=Release" alt="Latest Release" /></a>
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest"><img src="https://img.shields.io/badge/Platform-fnOS%20%7C%20Synology%20%7C%20QNAP%20%7C%20TerraMaster%20%7C%20UGNAS%20%7C%20CWNAS%20%7C%20Docker-4f46e5" alt="Platforms" /></a>
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml"><img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose" /></a>
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest"><img src="https://img.shields.io/github/v/release/WHWgogogo/LyraNest-Xiaoai-Bridge?display_name=tag&label=Release" alt="Latest Release" /></a>
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest"><img src="https://img.shields.io/badge/Platform-fnOS%20%7C%20Synology%20%7C%20QNAP%20%7C%20TerraMaster%20%7C%20UGNAS%20%7C%20CWNAS%20%7C%20Docker-4f46e5" alt="Platforms" /></a>
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest/download/docker-compose.yml"><img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose" /></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest">下载最新版</a> ·
+  <a href="https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest">下载最新版</a> ·
   <a href="https://lyranest.cc.cd/">官网</a> ·
   <a href="#docker-compose-部署">Docker 部署</a> ·
   <a href="https://github.com/WHWgogogo/LyraNest">LyraNest 主项目</a>
@@ -49,7 +49,7 @@
 
 ## 获取安装包与部署文件
 
-请前往 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest) 下载对应平台的文件：
+请前往 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest) 下载对应平台的文件：
 
 | 文件 | 适用平台 / 架构 | 说明 |
 | :--- | :--- | :--- |
@@ -69,7 +69,7 @@
 
 ## 飞牛 fnOS 原生 FPK 安装（推荐）
 
-1. 从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest) 下载 `LyraNest-XiaoAI-Bridge-1.1.6-fnos-native.fpk`。
+1. 从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest) 下载 `LyraNest-XiaoAI-Bridge-1.1.6-fnos-native.fpk`。
 2. 打开飞牛应用中心，选择“手动安装 / 上传应用”，上传 FPK 文件并完成安装。
 3. 在飞牛系统应用列表中点击图标打开，或在浏览器中访问 `http://<飞牛局域网IP>:18090`。
 4. 首次进入请设置 6 位数字管理访问密码，登录小米账号并完成音箱绑定与服务地址配置。
@@ -84,7 +84,7 @@
 
 ## 其他 NAS 原生安装包
 
-QNAP、Synology DSM、绿联 NAS 与铁威马 TOS 7 用户可从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest) 下载对应架构的原生包，在各自系统的应用中心或套件中心选择手动安装：
+QNAP、Synology DSM、绿联 NAS 与铁威马 TOS 7 用户可从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest) 下载对应架构的原生包，在各自系统的应用中心或套件中心选择手动安装：
 
 - **威联通 QNAP**：启用“允许安装非 QNAP 签名的应用程序”，手动上传 `.qpkg`。
 - **群晖 DSM**：打开套件中心点击“手动安装”，上传 `.spk` 安装。
@@ -146,7 +146,7 @@ services:
 
 ```bash
 mkdir -p lyranest-xiaoai-bridge && cd lyranest-xiaoai-bridge
-curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge/releases/latest/download/docker-compose.yml
+curl -fLO https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest/download/docker-compose.yml
 mkdir -p data
 docker compose pull
 docker compose up -d
