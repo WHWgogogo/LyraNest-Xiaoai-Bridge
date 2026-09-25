@@ -1,0 +1,25 @@
+{
+  "name": "lyranest-xiaoai-bridge",
+  "version": "1.1.6",
+  "description": "XiaoAI smart speaker bridge service for LyraNest",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "node -e \"require('node:fs').rmSync('.test-dist',{recursive:true,force:true})\" && tsc -p tsconfig.test.json && node --test \".test-dist/test/*.test.js\" && python -B -m unittest discover -s python -p \"test_*.py\"",
+    "package:fnos": "node fnos/build-fpk.mjs",
+    "package:qpkg": "node qpkg/build-qpkg.mjs",
+    "package:spk": "node synology/build-spk.mjs",
+    "package:terramaster": "node terramaster/build-deb.mjs",
+    "package:ugnas": "node ugnas/build-upk.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Proprietary",
+  "dependencies": {}
+}

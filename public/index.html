@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>LyraNest XiaoAI Bridge</title>
+  <link rel="icon" href="./ui/logo.png" type="image/png" />
+  <link rel="stylesheet" href="./ui/app.css" />
+</head>
+<body>
+  <main id="app">
+    <section aria-labelledby="access-title" class="access-shell" id="accessView">
+      <form class="access-card glass" id="accessForm">
+        <div class="access-mark" aria-hidden="true">
+          <img alt="" src="./ui/logo.png" />
+        </div>
+        <span class="eyebrow" id="accessEyebrow">LYRANEST XIAOAI BRIDGE</span>
+        <h1 id="access-title">访问管理台</h1>
+        <label>
+          <span>访问口令</span>
+          <input autocomplete="current-password" id="accessToken" required type="password" />
+        </label>
+        <label class="hidden" id="accessConfirmField">
+          <span>确认访问口令</span>
+          <input autocomplete="new-password" disabled id="accessTokenConfirm" type="password" />
+        </label>
+        <button class="button button--primary" id="accessSubmit" type="submit">解锁</button>
+      </form>
+    </section>
+
+    <section class="bridge-shell hidden" id="bridgeView">
+      <header class="bridge-header glass">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img alt="" src="./ui/logo.png" />
+          </div>
+          <div>
+            <strong>LyraNest XiaoAI Bridge</strong>
+          </div>
+        </div>
+        <div class="header-actions">
+          <nav aria-label="项目链接" class="header-links">
+            <a class="header-link" href="https://lyranest.dpdns.org/" rel="noreferrer" target="_blank">LyraNest</a>
+            <a class="header-link" href="https://github.com/WHWgogogo/LyraNest-Xiaomi-Bridge" rel="noreferrer" target="_blank">项目仓库</a>
+          </nav>
+          <label class="enabled-toggle" title="启用 Bridge">
+            <span>启用</span>
+            <input id="enabledToggle" type="checkbox" />
+          </label>
+          <button aria-label="导出运行日志" class="button button--ghost button--compact" id="exportLogsBtn" title="一键导出最近1小时诊断日志" type="button">
+            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" style="width:14px;height:14px;margin-right:4px;vertical-align:-2px;stroke:currentColor;stroke-width:2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            导出日志
+          </button>
+          <button aria-label="切换到浅色模式" aria-pressed="true" class="icon-button" id="themeToggle" title="浅色模式" type="button">
+            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3.6"></circle>
+              <path d="M12 2.7v2.1m0 14.4v2.1m6.58-15.68-1.48 1.48m-10.2 10.2-1.48 1.48m14.38.02-1.48-1.48M6.58 7.1 5.1 5.62M21.3 12h-2.1M4.8 12H2.7"></path>
+            </svg>
+          </button>
+          <button aria-label="退出访问" class="icon-button" id="logoutAccess" title="退出访问" type="button">
+            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+              <path d="M10 5.2H5.8A1.8 1.8 0 0 0 4 7v10a1.8 1.8 0 0 0 1.8 1.8H10"></path>
+              <path d="m14 8.2 3.8 3.8-3.8 3.8M17.5 12H8.2"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div aria-live="polite" class="toast hidden" id="toast" role="status"></div>
+      <div class="inline-error hidden" id="pageError" role="alert"></div>
+
+      <section class="status-grid">
+        <article class="status-card glass">
+          <span class="status-dot" id="xiaomiDot"></span>
+          <div>
+            <small>小米账号</small>
+            <strong id="xiaomiStatus">未登录</strong>
+          </div>
+        </article>
+        <article class="status-card glass">
+          <span class="status-dot" id="lyranestDot"></span>
+          <div>
+            <small>LyraNest</small>
+            <strong id="lyranestStatus">未连接</strong>
+          </div>
+        </article>
+        <article class="status-card glass">
+          <span class="status-dot" id="deviceDot"></span>
+          <div>
+            <small>当前设备</small>
+            <strong id="deviceStatus">未选择</strong>
+          </div>
+        </article>
+        <article class="status-card glass">
+          <div>
+            <small>运行时间</small>
+            <strong id="uptimeStatus">0 秒</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="settings-grid">
+        <article class="settings-card glass">
+          <header class="card-heading">
+            <div>
+              <h2>小米账号</h2>
+            </div>
+            <button class="button button--ghost button--compact" id="xiaomiLogout" type="button">退出登录</button>
+          </header>
+          <div class="xiaomi-login-panel">
+            <div class="xiaomi-login-state">
+              <strong id="xiaomiLoginState">尚未登录</strong>
+              <small id="xiaomiLoginDetail"></small>
+            </div>
+            <form class="form-grid" id="xiaomiLoginForm">
+              <label>
+                <span>小米账号</span>
+                <input autocomplete="username" id="xiaomiUsername" required />
+              </label>
+              <label>
+                <span>密码</span>
+                <input autocomplete="current-password" id="xiaomiPassword" required type="password" />
+              </label>
+              <button class="button button--primary" id="xiaomiLoginSubmit" type="submit">登录</button>
+            </form>
+            <form class="form-grid hidden" id="xiaomiVerificationForm">
+              <label>
+                <span id="xiaomiVerificationLabel">短信验证码</span>
+                <input autocomplete="one-time-code" id="xiaomiVerificationCode" inputmode="numeric" maxlength="12" required />
+              </label>
+              <button class="button button--primary" id="xiaomiVerificationSubmit" type="submit">验证</button>
+            </form>
+          </div>
+        </article>
+
+        <article class="settings-card glass">
+          <header class="card-heading">
+            <div>
+              <h2>音箱设备</h2>
+            </div>
+            <button class="button button--secondary button--compact" id="refreshDevices" type="button">刷新设备</button>
+          </header>
+          <div class="device-list" id="deviceList"></div>
+        </article>
+
+        <article class="settings-card glass">
+          <header class="card-heading">
+            <div>
+              <h2>LyraNest 连接</h2>
+            </div>
+            <button class="button button--ghost button--compact" id="testLyraNest" type="button">测试连接</button>
+          </header>
+          <form class="form-grid" id="lyranestForm">
+            <label>
+              <span>LyraNest 服务地址</span>
+              <input id="lyranestBaseUrl" placeholder="http://192.168.0.101:8080" />
+            </label>
+            <label>
+              <span>用户名</span>
+              <input autocomplete="username" id="lyranestUsername" />
+            </label>
+            <label>
+              <span>密码</span>
+              <input autocomplete="current-password" id="lyranestPassword" type="password" />
+            </label>
+            <button class="button button--primary" id="lyranestSubmit" type="submit">保存凭据</button>
+          </form>
+        </article>
+
+        <article class="settings-card glass">
+          <header class="card-heading">
+            <div>
+              <h2>播放配置</h2>
+            </div>
+          </header>
+          <form class="form-grid" id="speakerForm">
+            <label>
+              <span>音箱可达的 LyraNest 地址</span>
+              <input id="speakerBaseUrl" placeholder="http://192.168.0.101:8080" />
+            </label>
+            <label>
+              <span>轮询间隔（秒）</span>
+              <input id="pollInterval" max="60" min="1" type="number" />
+            </label>
+            <label>
+              <span>搜索数量</span>
+              <input id="searchLimit" max="50" min="1" type="number" />
+            </label>
+            <label class="checkbox-row">
+              <input id="autoContinueLibrary" type="checkbox" />
+              <span>播完后自动连播曲库（电台漫游模式）</span>
+            </label>
+            <label>
+              <span>全局默认播控协议</span>
+              <select id="speakerProtocol">
+                <option value="auto">自动探测 (推荐：根据音箱机型特征自动选择)</option>
+                <option value="play_url">媒体通道 URL (标准音箱 play_url，直拉本地流)</option>
+                <option value="play_music">音乐库协议 (触屏/家庭屏 play_music，唤醒播放屏)</option>
+              </select>
+            </label>
+            <label>
+              <span>全局音频转码策略</span>
+              <select id="speakerTranscode">
+                <option value="auto">自动适配 (全志/受限音箱转 MP3，其余保持原声)</option>
+                <option value="mp3">强制转码为 MP3 (兼容所有小爱音箱及弱网环境)</option>
+                <option value="never">保持原声 (不转码，仅适合支持无损的机型)</option>
+              </select>
+            </label>
+            <button class="button button--primary" id="speakerSubmit" type="submit">保存配置</button>
+          </form>
+        </article>
+      </section>
+
+      <section class="spatial-section">
+        <article class="settings-card glass" id="spatialCard">
+          <header class="card-heading">
+            <div>
+              <h2>音乐实验室 · 多音箱空间音频与全屋背景音乐 (实验性)</h2>
+              <p class="card-tip">支持自由组合全屋背景音乐 (漫游组播)、2.0 立体声、3.1 前排影院与 5.1 环绕声虚拟设备，协同并发推流、各房间独立微调与声学校准。</p>
+            </div>
+            <button class="button button--secondary button--compact" id="openSpatialModalBtn" type="button">+ 创建设备组</button>
+          </header>
+
+          <div class="spatial-group-list" id="spatialGroupList">
+            <div class="empty-tip">尚未配置空间音频或全屋设备组，点击右上角“+ 创建设备组”开始配置</div>
+          </div>
+
+          <div class="spatial-editor glass hidden" id="spatialEditor">
+            <header class="spatial-editor-header">
+              <h3 id="spatialEditorTitle">配置设备组</h3>
+              <button class="icon-button" id="closeSpatialEditorBtn" title="关闭" type="button">✕</button>
+            </header>
+            <form class="form-grid" id="spatialForm">
+              <input id="spatialGroupId" type="hidden" />
+              <div class="form-row-2col">
+                <label>
+                  <span>设备组名称</span>
+                  <input id="spatialGroupName" placeholder="例如：全屋背景音乐 / 客厅 3.1 影院" required />
+                </label>
+                <label>
+                  <span>拓扑与音频模式</span>
+                  <select id="spatialGroupMode">
+                    <option value="whole_house">🏠 全屋背景音乐 (多房间漫游组播)</option>
+                    <option value="stereo_2_0">2.0 立体声对 (双音箱)</option>
+                    <option value="front_center_3_1">3.1 前排影院 (左/右/中置人声)</option>
+                    <option value="surround_5_1">5.1 环绕声系统 (全景多箱)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="whole-house-toolbar hidden" id="wholeHouseToolbar">
+                <button class="button button--ghost button--compact" id="addAllOnlineSpeakersBtn" type="button">⚡ 一键添加所有在线音箱</button>
+                <button class="button button--ghost button--compact" id="addRoomSpeakerBtn" type="button">+ 添加房间音箱</button>
+              </div>
+
+              <div class="spatial-slots-container" id="spatialSlotsContainer"></div>
+
+              <div class="spatial-form-actions">
+                <button class="button button--ghost" id="spatialTestToneAllBtn" type="button">🔊 一键全组校准测试</button>
+                <div style="flex:1"></div>
+                <button class="button button--ghost" id="cancelSpatialBtn" type="button">取消</button>
+                <button class="button button--primary" id="saveSpatialBtn" type="submit">保存设备组</button>
+              </div>
+            </form>
+          </div>
+        </article>
+      </section>
+
+      <section class="command-grid">
+        <article class="settings-card glass" id="voiceCommandCard">
+          <header class="card-heading">
+            <div>
+              <h2>自定义语音口令</h2>
+            </div>
+          </header>
+          <p class="card-tip">支持为各个指令设置多个口令词，不同词之间用逗号（, 或 ，）或空格分隔。</p>
+          <form class="form-grid" id="voiceCommandForm">
+            <label>
+              <span>下一首口令</span>
+              <input id="voiceCmdNext" placeholder="下一首, 换一首, 切歌, 跳过" />
+            </label>
+            <label>
+              <span>上一首口令</span>
+              <input id="voiceCmdPrevious" placeholder="上一首, 前一首" />
+            </label>
+            <label>
+              <span>暂停口令</span>
+              <input id="voiceCmdPause" placeholder="暂停, 音乐暂停, 别放了, 先别放, 先停一下" />
+            </label>
+            <label>
+              <span>停止口令</span>
+              <input id="voiceCmdStop" placeholder="停止, 关机, 退出播放, 别唱了, 停, 关掉, 不要放啦, 闭嘴" />
+            </label>
+            <label>
+              <span>歌单播放口令</span>
+              <input id="voiceCmdPlaylist" placeholder="播放歌单, 放歌单, 听歌单, 歌单" />
+            </label>
+            <label>
+              <span>曲库播放口令</span>
+              <input id="voiceCmdLibrary" placeholder="播放曲库, 放曲库, 听曲库, 曲库" />
+            </label>
+            <label>
+              <span>收藏播放口令</span>
+              <input id="voiceCmdFavorite" placeholder="播放收藏, 播放我喜欢的歌, 听收藏, 放收藏, 我喜欢的音乐" />
+            </label>
+            <label>
+              <span>歌曲点播前缀</span>
+              <input id="voiceCmdPlay" placeholder="播放歌曲, 播放, 放歌, 放一首, 来一首, 我想听" />
+            </label>
+            <label>
+              <span>有声书点播前缀</span>
+              <input id="voiceCmdAudiobook" placeholder="播放有声书, 继续播放有声书, 听小说, 听书, 我想听书, 有声书" />
+            </label>
+            <button class="button button--primary" id="voiceCmdSubmit" type="submit">保存口令配置</button>
+          </form>
+        </article>
+
+        <div class="console-side-column">
+          <article class="settings-card glass">
+            <header class="card-heading">
+              <div>
+                <h2>播放测试</h2>
+              </div>
+            </header>
+            <form class="play-form" id="playForm">
+              <input id="playKeyword" placeholder="输入歌名，或“有声书 三体 第5集”" required />
+              <button class="button button--primary" id="playSubmit" type="submit">播放</button>
+            </form>
+            <div class="play-result hidden" id="playResult"></div>
+          </article>
+
+          <article class="settings-card glass">
+            <header class="card-heading">
+              <div>
+                <h2>语音指令</h2>
+              </div>
+              <button class="button button--ghost button--compact" id="refreshCommands" type="button">刷新</button>
+            </header>
+            <div class="command-list" id="commandList"></div>
+          </article>
+
+          <section aria-labelledby="access-code-heading" class="access-code-section">
+            <article class="settings-card glass access-code-card">
+              <header class="card-heading">
+                <div>
+                  <h2 id="access-code-heading">访问口令</h2>
+                </div>
+              </header>
+              <form class="access-code-form" id="accessCodeForm">
+                <label>
+                  <span>新访问口令</span>
+                  <input autocomplete="new-password" id="newAccessToken" inputmode="numeric" maxlength="6" pattern="\d{6}" required type="password" />
+                </label>
+                <label>
+                  <span>确认访问口令</span>
+                  <input autocomplete="new-password" id="newAccessTokenConfirm" inputmode="numeric" maxlength="6" pattern="\d{6}" required type="password" />
+                </label>
+                <button class="button button--primary" id="accessCodeSubmit" type="submit">更新口令</button>
+              </form>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <footer class="bridge-footer">
+        <span>LyraNest XiaoAI Bridge</span>
+        <span id="bridgeVersion">v-</span>
+      </footer>
+    </section>
+  </main>
+  <script src="./ui/app.js"></script>
+</body>
+</html>
