@@ -153,9 +153,7 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   X08E: { playByMusicUrl: true, playbackProtocol: "play_music" },
   X8F: { playByMusicUrl: true, playbackProtocol: "play_music" },
   X4B: { playByMusicUrl: true, playbackProtocol: "play_music" },
-  OH2: { playByMusicUrl: true, playbackProtocol: "play_music", ttsCommand: "5-3" },
-  OH2P: { playByMusicUrl: true, playbackProtocol: "play_music", ttsCommand: "7-3" },
-  X6A: { playByMusicUrl: true, playbackProtocol: "play_music", ttsCommand: "7-3" },
+  X6A: { playByMusicUrl: true, playbackProtocol: "play_music" },
 
   // 万能遥控版（特定固件接口限制）
   LX05: { playByMusicUrl: true, playbackProtocol: "play_music" },
@@ -174,6 +172,8 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   L17M: { playByMusicUrl: false, playbackProtocol: "play_url" },
   LX01: { playByMusicUrl: false, playbackProtocol: "play_url", transcode: "mp3" },
   LX06: { playByMusicUrl: false, playbackProtocol: "play_url" },
+  OH2: { playByMusicUrl: false, playbackProtocol: "play_url" },
+  OH2P: { playByMusicUrl: false, playbackProtocol: "play_url" },
 };
 
 export function profileFor(hardware?: string): DeviceProfile {
