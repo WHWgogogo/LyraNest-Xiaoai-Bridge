@@ -154,6 +154,7 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   X8F: { playByMusicUrl: true, playbackProtocol: "play_music" },
   X4B: { playByMusicUrl: true, playbackProtocol: "play_music" },
   X6A: { playByMusicUrl: true, playbackProtocol: "play_music" },
+  OH11: { playByMusicUrl: true, playbackProtocol: "play_music" },
 
   // 万能遥控版（特定固件接口限制）
   LX05: { playByMusicUrl: true, playbackProtocol: "play_music" },

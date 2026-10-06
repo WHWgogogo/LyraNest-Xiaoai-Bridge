@@ -537,7 +537,7 @@ function playMusicMessage(url: string, trackId?: string): Record<string, unknown
     startaudioid: audioId,
     music: JSON.stringify({
       payload: {
-        audio_type: "MUSIC",
+        audio_type: "",
         audio_items: [{
           item_id: {
             audio_id: audioId,
