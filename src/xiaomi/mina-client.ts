@@ -515,23 +515,18 @@ function requestId(): string {
   return value;
 }
 
-export function deriveAudioId(trackId?: string): string {
-  if (!trackId) {
-    const randNum = Math.floor(Math.random() * 1000000000);
-    const suffix = String(randNum).padStart(10, "0").slice(-10);
-    return `158297${suffix}000`;
-  }
-  let hashNum = 0;
-  for (let i = 0; i < trackId.length; i++) {
-    hashNum = (hashNum * 31 + trackId.charCodeAt(i)) >>> 0;
-  }
-  const suffix = String(hashNum).padStart(10, "0").slice(-10);
-  const hash3 = String(hashNum % 997).padStart(3, "0");
-  return `158297${suffix}${hash3}`;
+export const STANDARD_MUSIC_AUDIO_ID = "1582971365183456177";
+export const STANDARD_MUSIC_CP_ID = "355454500";
+
+export function deriveAudioId(_trackId?: string): string {
+  // 必须使用公认真实存在的腾讯小微(QQ音乐)合法曲目 ID。
+  // 若使用伪造/哈希随机 ID，触屏音箱（如 OH11 等）在通过小微组件加载曲目元数据时会因 404
+  // 判定“歌单中无此歌曲”，从而播报“当前歌单没有歌曲，换一个试试吧”并拒播自定义音频流。
+  return STANDARD_MUSIC_AUDIO_ID;
 }
 
-function playMusicMessage(url: string, trackId?: string): Record<string, unknown> {
-  const audioId = deriveAudioId(trackId);
+function playMusicMessage(url: string, _trackId?: string): Record<string, unknown> {
+  const audioId = STANDARD_MUSIC_AUDIO_ID;
 
   return {
     startaudioid: audioId,
@@ -544,7 +539,7 @@ function playMusicMessage(url: string, trackId?: string): Record<string, unknown
             cp: {
               album_id: "-1",
               episode_index: 0,
-              id: "355454500",
+              id: STANDARD_MUSIC_CP_ID,
               name: "xiaowei",
             },
           },
