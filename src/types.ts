@@ -139,7 +139,8 @@ export interface DeviceProfile {
 
 // 经过社区与实机严谨验证：
 // 1. 触屏版机型与部分带沙箱机型内置了小微沙箱组件，必须走 player_play_music，且使用公认的标准合法曲目 ID (1582971365183456177)；
-// 2. 小爱音箱 Play 系列（全志芯片硬件受限，如 L05B、L05C）原厂固件底层不支持 player_play_url 媒体通道（下发虽然返回成功但无任何声音），必须走 player_play_music，且芯片不支持 FLAC 解码，必须转码为 MP3 串流；
+// 2. 小爱音箱 Play 系列（全志芯片硬件受限，如 L05B、L05C）原厂固件底层不支持 player_play_url 媒体通道（下发虽然返回成功但无任何声音），必须走 player_play_music；
+//    注意：不得默认强加 transcode: "mp3"，因为服务端实时转码管道采用 chunked 编码且无 Content-Length，还会拒绝 Range 探测，会导致小爱音箱底层播放器缓冲机制失效静默无声。默认应保持原始直接流；
 // 3. 其他非触屏标准音箱（如 L06、L06A、L09A、Xiaomi Sound 系列、OH2、OH2P 等），必须走 player_play_url (type: 1 媒体音乐通道)，避免被官方小微云端曲库拦截。
 export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   // 触屏版 / 智能家庭屏机型
@@ -158,21 +159,20 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   // 万能遥控版（特定固件接口限制）
   LX05: { playByMusicUrl: true, playbackProtocol: "play_music" },
 
-  // Play 系列（全志芯片硬件受限：底层仅支持 player_play_music，且硬件不支持 FLAC，必须转码为 MP3）
-  L05B: { playByMusicUrl: true, playbackProtocol: "play_music", transcode: "mp3" },
-  L05C: { playByMusicUrl: true, playbackProtocol: "play_music", transcode: "mp3" },
+  // Play 系列（全志芯片硬件受限：底层仅支持 player_play_music，原厂流媒体播放器依赖 Content-Length 与 Range 支持，默认使用直接流）
+  L05B: { playByMusicUrl: true, playbackProtocol: "play_music" },
+  L05C: { playByMusicUrl: true, playbackProtocol: "play_music" },
 
   // 标准纯音频机型（非触屏音箱）：走 player_play_url 媒体通道
-  // 其中 L07A / LX01 等不支持 FLAC 解码，默认启用 mp3 转码
   L06: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L06A: { playByMusicUrl: false, playbackProtocol: "play_url" },
-  L07A: { playByMusicUrl: false, playbackProtocol: "play_url", transcode: "mp3" },
+  L07A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L09A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L15A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L16A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L17A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L17M: { playByMusicUrl: false, playbackProtocol: "play_url" },
-  LX01: { playByMusicUrl: false, playbackProtocol: "play_url", transcode: "mp3" },
+  LX01: { playByMusicUrl: false, playbackProtocol: "play_url" },
   LX06: { playByMusicUrl: false, playbackProtocol: "play_url" },
   OH2: { playByMusicUrl: false, playbackProtocol: "play_url" },
   OH2P: { playByMusicUrl: false, playbackProtocol: "play_url" },

@@ -1,6 +1,6 @@
 {
   "name": "lyranest-xiaoai-bridge",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "XiaoAI smart speaker bridge service for LyraNest",
   "type": "module",
   "main": "dist/index.js",
