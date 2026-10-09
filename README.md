@@ -70,6 +70,7 @@
 | `LyraNest-XiaoAI-Bridge-1.2.0-qnap-arm_64.qpkg` | 威联通 QNAP (ARM64) | 威联通 App Center 原生套件 |
 | `LyraNest-XiaoAI-Bridge-1.2.0-ugnas-amd64.upk` | 绿联 NAS (UGOS AMD64) | 绿联私有云原生应用包 |
 | `LyraNest-XiaoAI-Bridge-1.2.0-ugnas-arm64.upk` | 绿联 NAS (UGOS ARM64) | 绿联私有云原生应用包 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-cwnas.cpk` | 畅网 NAS (CWNAS / AINAS) | 畅网 NAS 原生 CPK 应用包 |
 | `docker-compose.yml` | 通用 Docker 环境 | Docker Compose 一键部署配置 |
 
 ---
@@ -85,7 +86,7 @@
 
 ## 畅网 NAS (CWNAS / AINAS) 原生 CPK 安装
 
-畅网 NAS 用户可下载 `LyraNest-XiaoAI-Bridge-1.1.6-cwnas.cpk`。在畅网 NAS 系统应用管理器中点击“手动安装 / 本地安装”，选择下载的 `.cpk` 文件即可一键部署并自动注册后台服务与入口图标。
+畅网 NAS 用户可下载 `LyraNest-XiaoAI-Bridge-1.2.0-cwnas.cpk`。在畅网 NAS 系统应用管理器中点击“手动安装 / 本地安装”，选择下载的 `.cpk` 文件即可一键部署并自动注册后台服务与入口图标。
 
 ---
 
