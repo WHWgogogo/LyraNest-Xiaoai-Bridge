@@ -23,6 +23,7 @@ export interface BridgeConfig {
   play_mode?: "sequence" | "loop" | "shuffle" | "single_loop";
   playback_protocol?: "auto" | "play_music" | "play_url";
   transcode?: "auto" | "mp3" | "never";
+  bridge_base_url?: string;
 }
 
 export interface XiaomiDevice {
@@ -72,6 +73,7 @@ export interface LyraNestTrack {
   artist?: string;
   album?: string;
   duration_ms?: number;
+  extension?: string;
 }
 
 export interface LyraNestPlaylist {
@@ -190,4 +192,10 @@ export function profileFor(hardware?: string): DeviceProfile {
     playbackProtocol: "play_url",
     playByMusicUrl: false,
   };
+}
+
+export function isAllwinnerPlayDevice(hardware?: string): boolean {
+  if (!hardware) return false;
+  const hw = hardware.trim().toUpperCase();
+  return hw === "L05B" || hw === "L05C" || hw === "L07A" || hw === "LX01";
 }

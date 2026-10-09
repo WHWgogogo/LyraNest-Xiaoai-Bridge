@@ -437,7 +437,7 @@ X-Bridge-Token: <ACCESS_TOKEN>
   ```json
   {
     "status": "ok",
-    "version": "1.1.9"
+    "version": "1.2.0"
   }
   ```
 
@@ -447,7 +447,7 @@ X-Bridge-Token: <ACCESS_TOKEN>
 - **成功响应 (HTTP 200)**:
   ```json
   {
-    "version": "1.1.9",
+    "version": "1.2.0",
     "enabled": true,
     "xiaomi_login_state": "authenticated",
     "xiaomi_user_id": "123456789",

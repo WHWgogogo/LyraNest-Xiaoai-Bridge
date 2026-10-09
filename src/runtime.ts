@@ -2,7 +2,8 @@ import { findDevice } from "./xiaomi/device-manager.js";
 import { MinaClient, deriveAudioId } from "./xiaomi/mina-client.js";
 import { withXiaomiSession } from "./xiaomi/with-session.js";
 import { buildStreamUrl } from "./lyranest/url-builder.js";
-import { profileFor, type XiaomiDevice, type LyraNestBookChapter, type LyraNestTrack, type LyraNestLibrary, type BridgeConfig } from "./types.js";
+import { profileFor, isAllwinnerPlayDevice, type XiaomiDevice, type LyraNestBookChapter, type LyraNestTrack, type LyraNestLibrary, type BridgeConfig } from "./types.js";
+import { isHttpUrl } from "./config.js";
 import type { BridgeState } from "./index.js";
 import type { ParsedCommand } from "./voice/command-parser.js";
 import { logger, sanitizeUrl } from "./logger.js";
@@ -1148,6 +1149,47 @@ export function resolveTranscode(
   return undefined;
 }
 
+export function resolveBridgeBaseUrl(
+  config: BridgeConfig,
+  serverPort = 8090,
+): string {
+  if (config.bridge_base_url && isHttpUrl(config.bridge_base_url)) {
+    return config.bridge_base_url.replace(/\/+$/, "");
+  }
+  if (config.speaker_base_url && isHttpUrl(config.speaker_base_url)) {
+    try {
+      const parsed = new URL(config.speaker_base_url);
+      return `${parsed.protocol}//${parsed.hostname}:${serverPort}`;
+    } catch {
+      // fallback
+    }
+  }
+  return `http://127.0.0.1:${serverPort}`;
+}
+
+export function shouldRelayTranscode(
+  config: BridgeConfig,
+  hardware?: string,
+  deviceId?: string,
+  track?: LyraNestTrack,
+): boolean {
+  const binding = deviceId ? config.device_bindings?.[deviceId] : undefined;
+  if (binding?.transcode === "never" || config.transcode === "never") {
+    return false;
+  }
+  if (binding?.transcode === "mp3" || config.transcode === "mp3") {
+    return true;
+  }
+  if (isAllwinnerPlayDevice(hardware)) {
+    const ext = track?.extension?.toLowerCase();
+    if (ext === "mp3" || ext === "m4a" || ext === "aac") {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
 export async function playTrack(
   state: BridgeState,
   selectedDevice: XiaomiDevice,
@@ -1167,8 +1209,36 @@ export async function playTrack(
   }
 
   const mediaToken = await lnClient.getMediaToken();
-  const transcode = resolveTranscode(state.config, selectedDevice.hardware, selectedDevice.device_id);
-  const streamUrl = buildStreamUrl(state.config.speaker_base_url, track.id, mediaToken, transcode);
+  const needRelay = Boolean(state.mediaRelay && shouldRelayTranscode(state.config, selectedDevice.hardware, selectedDevice.device_id, track));
+
+  let streamUrl: string;
+  let transcodeMode: string | undefined;
+
+  if (needRelay) {
+    transcodeMode = "mp3 (relay)";
+    const port = state.port || 8090;
+    const bridgeBaseUrl = resolveBridgeBaseUrl(state.config, port);
+
+    state.mediaRelay?.registerToken(mediaToken, Date.now() + 2 * 3600 * 1000);
+    streamUrl = state.mediaRelay!.buildRelayUrl(bridgeBaseUrl, track.id, mediaToken);
+
+    try {
+      logger.info("playback", `设备 "${selectedDevice.name}" (${selectedDevice.hardware}) 需转码播放，启动桥接器媒体中继预热...`, {
+        device_id: selectedDevice.device_id,
+        track_id: track.id,
+        track_title: track.title,
+        extension: track.extension || "unknown",
+      });
+      await state.mediaRelay!.ensureCached(state.config.lyranest_base_url, track.id, mediaToken);
+    } catch (relayErr) {
+      logger.warn("playback", `中继缓存预热异常: ${relayErr instanceof Error ? relayErr.message : String(relayErr)}，继续下发中继流`);
+    }
+  } else {
+    const transcode = resolveTranscode(state.config, selectedDevice.hardware, selectedDevice.device_id);
+    transcodeMode = transcode || "original";
+    streamUrl = buildStreamUrl(state.config.speaker_base_url, track.id, mediaToken, transcode);
+  }
+
   const preferredProtocol = resolvePlaybackProtocol(state.config, selectedDevice.hardware, selectedDevice.device_id);
 
   // F2: 记录推送到音箱的曲目标识，供看门狗状态核对
@@ -1177,7 +1247,7 @@ export async function playTrack(
   }
   qm.setLastPushedTrackTitle(track.title);
 
-  logger.info("playback", `音频流构建成功，正在向音箱下发播放指令 (首选协议: ${preferredProtocol}${transcode ? `, 转码: ${transcode}` : ""})`, {
+  logger.info("playback", `音频流构建成功，正在向音箱下发播放指令 (首选协议: ${preferredProtocol}, 转码: ${transcodeMode})`, {
     device_id: selectedDevice.device_id,
     device_name: selectedDevice.name,
     track_id: track.id,
@@ -1185,7 +1255,7 @@ export async function playTrack(
     artist: track.artist,
     stream_url: sanitizeUrl(streamUrl),
     preferred_protocol: preferredProtocol,
-    transcode: transcode || "original",
+    transcode: transcodeMode,
   });
 
   const playResult = await withXiaomiSession(

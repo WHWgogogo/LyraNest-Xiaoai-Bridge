@@ -9,7 +9,9 @@ import { XiaomiSessionStore } from "./xiaomi/session-store.js";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { resolveDeploymentRuntime } from "./deployment.js";
-import { Router } from "./routes/router.js";
+import { Router, sendJson } from "./routes/router.js";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { MediaRelay } from "./media-relay.js";
 import { accessBootstrap, changeAccessToken, setupAccessToken } from "./routes/access.js";
 import { healthz } from "./routes/healthz.js";
 import { lyraNestLogin } from "./routes/lyranest-login.js";
@@ -42,12 +44,14 @@ import {
 } from "./routes/spatial.js";
 import type { XiaomiTokens, XiaomiDevice } from "./types.js";
 
-const VERSION = "1.1.9";
+const VERSION = "1.2.0";
 
 export interface BridgeState {
   version: string;
+  port: number;
   startTime: number;
   accessControl: AccessControl;
+  mediaRelay?: MediaRelay;
   config: Awaited<ReturnType<typeof loadConfig>>;
   lyraNest: LyraNestClient;
   lyraNestStore: LyraNestCredentialStore;
@@ -103,12 +107,16 @@ async function main(): Promise<void> {
     },
   });
 
+  const port = parseInt(process.env.BRIDGE_PORT ?? "8090", 10);
+  const mediaRelay = new MediaRelay({ dataDir, port });
   const spatialCoordinator = new SpatialCoordinator(dataDir);
 
   const state: BridgeState = {
     version: VERSION,
+    port,
     startTime: Date.now(),
     accessControl,
+    mediaRelay,
     config,
     lyraNest,
     lyraNestStore,
@@ -188,7 +196,43 @@ async function main(): Promise<void> {
   router.post("/api/spatial/test-tone", spatialTestTone(state, spatialCoordinator));
   router.post("/api/spatial/tone", spatialTestTone(state, spatialCoordinator));
 
-  const port = parseInt(process.env.BRIDGE_PORT ?? "8090", 10);
+  const streamHandler = async (req: IncomingMessage, res: ServerResponse) => {
+    const rawPath = req.url?.split("?")[0] ?? "";
+    const match = /^\/stream\/([^/?#]+)$/.exec(rawPath);
+    if (!match) {
+      sendJson(res, 404, { error: "stream not found" });
+      return;
+    }
+    const trackId = decodeURIComponent(match[1]);
+    const query = new URL(req.url ?? "/", "http://localhost").searchParams;
+    const token = query.get("token") || (req.headers["x-bridge-token"] as string);
+
+    const isAuthorized = mediaRelay.isTokenValid(token) || (Boolean(token) && state.accessControl.isAuthorized(token));
+    if (!isAuthorized) {
+      sendJson(res, 401, { error: "unauthorized stream access" });
+      return;
+    }
+
+    try {
+      const filePath = await mediaRelay.ensureCached(
+        state.config.lyranest_base_url,
+        trackId,
+        token,
+      );
+      await mediaRelay.serveAudioFileWithRange(req, res, filePath);
+    } catch (err) {
+      logger.error("media-relay", `流式中继传输失败: ${err instanceof Error ? err.message : String(err)}`, {
+        track_id: trackId,
+      });
+      if (!res.headersSent) {
+        sendJson(res, 502, { error: "failed to retrieve or stream transcoded media" });
+      }
+    }
+  };
+
+  router.getPattern(/^\/stream\/[^/?#]+$/, streamHandler);
+  router.headPattern(/^\/stream\/[^/?#]+$/, streamHandler);
+
   router.listen(port, () => {
     logger.info("bridge", `xiaoai-bridge listening on port ${port}`, {
       version: VERSION,

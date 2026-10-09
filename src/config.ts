@@ -26,6 +26,7 @@ const DEFAULT_CONFIG: BridgeConfig = {
   play_mode: "loop",
   playback_protocol: "auto",
   transcode: "auto",
+  bridge_base_url: "",
 };
 
 let cachedConfig: BridgeConfig | null = null;
@@ -60,7 +61,7 @@ export async function saveConfig(update: Partial<BridgeConfig>): Promise<BridgeC
 export function validateConfig(config: BridgeConfig): BridgeConfig {
   if (config.version !== 1) throw new Error("unsupported config version");
   if (typeof config.enabled !== "boolean") config.enabled = false;
-  for (const key of ["lyranest_base_url", "lyranest_username", "speaker_base_url", "selected_device_id"] as const) {
+  for (const key of ["lyranest_base_url", "lyranest_username", "speaker_base_url", "selected_device_id", "bridge_base_url"] as const) {
     if (typeof config[key] !== "string") config[key] = "";
   }
   const defaultCmds = DEFAULT_CONFIG.voice_commands;
@@ -93,6 +94,7 @@ export function validateConfig(config: BridgeConfig): BridgeConfig {
   }
   if (!isHttpUrl(config.lyranest_base_url)) config.lyranest_base_url = "";
   if (!isHttpUrl(config.speaker_base_url)) config.speaker_base_url = "";
+  if (config.bridge_base_url && !isHttpUrl(config.bridge_base_url)) config.bridge_base_url = "";
   const pollInterval = Number(config.poll_interval_sec);
   config.poll_interval_sec = Number.isFinite(pollInterval)
     ? Math.max(1, Math.min(60, Math.floor(pollInterval)))

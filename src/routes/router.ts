@@ -30,6 +30,18 @@ export class Router {
     this.routes.push({ method: "GET", pattern: pathToRegex(path), handler });
   }
 
+  head(path: string, handler: RouteHandler): void {
+    this.routes.push({ method: "HEAD", pattern: pathToRegex(path), handler });
+  }
+
+  getPattern(pattern: RegExp, handler: RouteHandler): void {
+    this.routes.push({ method: "GET", pattern, handler });
+  }
+
+  headPattern(pattern: RegExp, handler: RouteHandler): void {
+    this.routes.push({ method: "HEAD", pattern, handler });
+  }
+
   getStatic(path: string, filePath: string, contentType: string): void {
     this.staticRoutes.push({ pattern: pathToRegex(path), contentType, filePath: resolve(filePath) });
   }

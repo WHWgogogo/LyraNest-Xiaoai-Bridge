@@ -1,6 +1,6 @@
 services:
   xiaoai-bridge:
-    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.1.9
+    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.2.0
     container_name: lyranest-xiaoai-bridge
     restart: unless-stopped
     mem_limit: 128m

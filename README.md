@@ -22,19 +22,24 @@
 
 > **插件说明**：本插件为 LyraNest 官方音频生态扩展组件，专门负责与小米/小爱音箱（XiaoAI）进行信令交互、语音指令捕获与音频直连播放。使用前请先部署 [LyraNest 主服务](https://github.com/WHWgogogo/LyraNest)。
 
-当前稳定版本：`1.1.6`
+当前稳定版本：`1.2.0`
 
 交流 QQ 群：`700454910`
 
 ---
 
-## 1.1.6 更新日志
+## 1.2.0 更新日志
 
-- **多音箱会话隔离与多账号绑定**：重构音箱会话管理通道，支持同一局域网下绑定多台不同型号的小爱音箱并实现独立的播放状态管理。
-- **有声书语音点播与双向断点续播**：新增有声书书籍与章节语音检索指令，音箱端播放进度实时回传同步至 LyraNest 服务端与全端客户端。
-- **虚拟播放时钟（Virtual Clock）**：引入服务端心跳虚拟时钟机制，彻底解决音箱休眠状态回传延迟、丢帧与偶发断流问题。
-- **畅网 NAS (CWNAS / AINAS) 原生支持**：正式推出针对畅网私有云的一键安装规范包 `LyraNest-XiaoAI-Bridge-1.1.6-cwnas.cpk`。
-- **全 NAS 体系官方包升级**：针对飞牛 fnOS、群晖 DSM、铁威马 TOS 7、威联通 QNAP、绿联 UGnas 发布深度优化的 1.1.6 原生应用包。
+- **小爱音箱 Play 无损格式中继与转码闭环**：在桥接器内部集成独立媒体中继缓存引擎（Media Relay），自动将 LyraNest 服务端的实时 MP3 转码流落盘缓存为标准静态 MP3 文件，并提供完整的 RFC 7233 Range（200/206/416）分片响应与 `Content-Length` 支持，彻底解决全志芯片硬件受限机型（L05B、L05C、L07A、LX01 等）因无法解码 FLAC/无损且无法缓冲分块流导致的播放静默无声问题。
+- **全端零开销智能流直链**：触屏版（OH11、X08 等）与标准纯音频机型继续享受 LyraNest 服务端直接串流，仅在设备有转码需求时按需中继，兼顾极致音质与零 CPU 负载。
+- **桥接器中继地址配置与自动推导**：管理后台新增“音箱可达的桥接器地址”配置项，支持手动自定义或根据音箱访问地址与服务端口自动推导。
+- **全平台原生安装包同步升级**：同步打包发布飞牛 fnOS（FPK）、威联通 QNAP（QPKG）、群晖 DSM（SPK）、铁威马 TOS 7（DEB）、绿联 UGnas（UPK）以及 Docker 镜像 1.2.0。
+
+---
+
+## 1.1.9 更新日志
+
+- **小爱音箱 Play 播控通道与触屏版曲目 ID 规范化**：修复触屏版（OH11 等）曲目 ID 检索策略，并恢复 Play 系列直接流支持。
 
 ---
 
@@ -54,23 +59,24 @@
 
 | 文件 | 适用平台 / 架构 | 说明 |
 | :--- | :--- | :--- |
-| `LyraNest-XiaoAI-Bridge-1.1.6-fnos-native.fpk` | 飞牛 fnOS (x86/ARM) | 飞牛 NAS 原生安装包（推荐） |
-| `LyraNest-XiaoAI-Bridge-1.1.6-cwnas.cpk` | 畅网 NAS (CWNAS / AINAS) | 畅网私有云原生应用安装包 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-synology-x86_64.spk` | 群晖 DSM (Intel / AMD) | 群晖 DSM 7.x x86_64 套件 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-synology-armv8.spk` | 群晖 DSM (ARM64) | 群晖 DSM 7.x ARM64 套件 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-terramaster-x86_64.deb` | 铁威马 TOS 7 (x86_64) | 铁威马应用中心原生安装包 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-terramaster-aarch64.deb`| 铁威马 TOS 7 (ARM64) | 铁威马应用中心原生安装包 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-qnap-x86_64.qpkg` | 威联通 QNAP (x86_64) | 威联通 App Center 原生套件 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-qnap-arm_64.qpkg` | 威联通 QNAP (ARM64) | 威联通 App Center 原生套件 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-ugnas-amd64.upk` | 绿联 NAS (UGOS AMD64) | 绿联私有云原生应用包 |
-| `LyraNest-XiaoAI-Bridge-1.1.6-ugnas-arm64.upk` | 绿联 NAS (UGOS ARM64) | 绿联私有云原生应用包 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-fnos-native.fpk` | 飞牛 fnOS (x86/ARM) | 飞牛 NAS 原生安装包（推荐） |
+| `LyraNest-XiaoAI-Bridge-1.2.0-synology.spk` | 群晖 DSM (通用) | 群晖 DSM 7.x 通用架构套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-synology-x86_64.spk` | 群晖 DSM (Intel / AMD) | 群晖 DSM 7.x x86_64 套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-synology-armv8.spk` | 群晖 DSM (ARM64) | 群晖 DSM 7.x ARM64 套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-terramaster-x86_64.deb` | 铁威马 TOS 7 (x86_64) | 铁威马应用中心原生安装包 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-terramaster-aarch64.deb`| 铁威马 TOS 7 (ARM64) | 铁威马应用中心原生安装包 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-qnap.qpkg` | 威联通 QNAP (通用) | 威联通 App Center 通用套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-qnap-x86_64.qpkg` | 威联通 QNAP (x86_64) | 威联通 App Center 原生套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-qnap-arm_64.qpkg` | 威联通 QNAP (ARM64) | 威联通 App Center 原生套件 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-ugnas-amd64.upk` | 绿联 NAS (UGOS AMD64) | 绿联私有云原生应用包 |
+| `LyraNest-XiaoAI-Bridge-1.2.0-ugnas-arm64.upk` | 绿联 NAS (UGOS ARM64) | 绿联私有云原生应用包 |
 | `docker-compose.yml` | 通用 Docker 环境 | Docker Compose 一键部署配置 |
 
 ---
 
 ## 飞牛 fnOS 原生 FPK 安装（推荐）
 
-1. 从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest) 下载 `LyraNest-XiaoAI-Bridge-1.1.6-fnos-native.fpk`。
+1. 从 [GitHub 最新发行版](https://github.com/WHWgogogo/LyraNest-Xiaoai-Bridge/releases/latest) 下载 `LyraNest-XiaoAI-Bridge-1.2.0-fnos-native.fpk`。
 2. 打开飞牛应用中心，选择“手动安装 / 上传应用”，上传 FPK 文件并完成安装。
 3. 在飞牛系统应用列表中点击图标打开，或在浏览器中访问 `http://<飞牛局域网IP>:18090`。
 4. 首次进入请设置 6 位数字管理访问密码，登录小米账号并完成音箱绑定与服务地址配置。
@@ -101,10 +107,10 @@ QNAP、Synology DSM、绿联 NAS 与铁威马 TOS 7 用户可从 [GitHub 最新�
 服务端镜像统一发布至 GitHub Container Registry：
 
 ```text
-ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.1.6
+ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.2.0
 ```
 
-支持自动多架构自适应（`linux/amd64` 与 `linux/arm64`），默认提供 `1.1.6` 与 `latest` 标签。
+支持自动多架构自适应（`linux/amd64` 与 `linux/arm64`），默认提供 `1.2.0` 与 `latest` 标签。
 
 ---
 
@@ -115,7 +121,7 @@ ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.1.6
 ```yaml
 services:
   xiaoai-bridge:
-    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.1.6
+    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.2.0
     container_name: lyranest-xiaoai-bridge
     restart: unless-stopped
     mem_limit: 128m

@@ -148,6 +148,9 @@
     }
     if (syncScopes.includes("playback") || syncScopes.includes("voice_commands")) {
       $("#speakerBaseUrl").value = config.speaker_base_url || "";
+      if ($("#bridgeBaseUrl")) {
+        $("#bridgeBaseUrl").value = config.bridge_base_url || "";
+      }
       $("#pollInterval").value = String(config.poll_interval_sec || 2);
       $("#searchLimit").value = String(config.search_limit || 10);
       const autoContinue = $("#autoContinueLibrary");
@@ -590,6 +593,7 @@
     try {
       const payload = {
         speaker_base_url: $("#speakerBaseUrl").value.trim(),
+        bridge_base_url: $("#bridgeBaseUrl") ? $("#bridgeBaseUrl").value.trim() : "",
         poll_interval_sec: Number($("#pollInterval").value),
         search_limit: Number($("#searchLimit").value),
         auto_continue_library: $("#autoContinueLibrary") ? $("#autoContinueLibrary").checked : true,

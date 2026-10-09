@@ -29,12 +29,22 @@ export function normalizeTrack(raw: unknown): LyraNestTrack {
     durationMs = r.duration < 10000 ? Math.round(r.duration * 1000) : Math.round(r.duration);
   }
 
+  let extension: string | undefined;
+  if (typeof r.extension === "string" && r.extension.trim()) {
+    extension = r.extension.trim().toLowerCase().replace(/^\./, "");
+  } else if (typeof r.file_name === "string" && r.file_name.includes(".")) {
+    extension = r.file_name.split(".").pop()?.trim().toLowerCase();
+  } else if (typeof r.path === "string" && r.path.includes(".")) {
+    extension = r.path.split(".").pop()?.trim().toLowerCase();
+  }
+
   return {
     id: String(r.id || ""),
     title: String(r.title || ""),
     artist: r.artist ? String(r.artist) : undefined,
     album: r.album ? String(r.album) : undefined,
     duration_ms: durationMs,
+    extension,
   };
 }
 
