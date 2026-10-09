@@ -34,7 +34,7 @@ export function devices(state: BridgeState): RouteHandler {
       const enhanced = mapped.map((d) => {
         const qm = getQueueManager(state, d.device_id);
         const binding = state.config.device_bindings?.[d.device_id];
-        const effectiveProtocol = resolvePlaybackProtocol(state.config, d.hardware, d.device_id);
+        const effectiveProtocol = resolvePlaybackProtocol(state.config, d.hardware, d.device_id, d.name);
         const effectiveTranscode = resolveTranscode(state.config, d.hardware, d.device_id) || "original";
         const hasCustomAuth = Boolean(binding?.enabled && binding?.lyranest_username);
         const boundUser = (hasCustomAuth && binding?.lyranest_username) ? binding.lyranest_username : "";

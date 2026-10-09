@@ -3,7 +3,7 @@ import { sendJson, readJsonBody } from "./router.js";
 import { buildStreamUrl } from "../lyranest/url-builder.js";
 import { MinaClient } from "../xiaomi/mina-client.js";
 import { withXiaomiSession } from "../xiaomi/with-session.js";
-import { profileFor } from "../types.js";
+import { profileFor, isMustPlayMusicDevice } from "../types.js";
 import type { BridgeState } from "../index.js";
 import { logger, sanitizeUrl } from "../logger.js";
 import { parseCommand } from "../voice/command-parser.js";
@@ -82,7 +82,7 @@ export function testPlay(state: BridgeState): RouteHandler {
         const mediaToken = await lnClient.getMediaToken();
         const transcode = resolveTranscode(state.config, targetDevice.hardware, targetDevice.device_id);
         const streamUrl = buildStreamUrl(state.config.speaker_base_url, trackId, mediaToken, transcode);
-        const preferredProtocol = resolvePlaybackProtocol(state.config, targetDevice.hardware, targetDevice.device_id);
+        const preferredProtocol = resolvePlaybackProtocol(state.config, targetDevice.hardware, targetDevice.device_id, targetDevice.name);
 
         logger.info("test-play", `测试播放有声书音频流构建成功，正在向音箱下发播放 (协议模式: ${preferredProtocol}${transcode ? `, 转码: ${transcode}` : ""})`, {
           book_title: book.title,
@@ -100,6 +100,8 @@ export function testPlay(state: BridgeState): RouteHandler {
             streamUrl,
             preferredProtocol,
             trackId,
+            targetDevice.hardware,
+            targetDevice.name,
           ),
         );
 
@@ -112,7 +114,9 @@ export function testPlay(state: BridgeState): RouteHandler {
           sendJson(res, 502, { error: "speaker rejected play command" });
           return;
         }
-        deviceProtocolCache.set(targetDevice.device_id, playResult.protocolUsed);
+        if (!isMustPlayMusicDevice(targetDevice.hardware, targetDevice.name) || playResult.protocolUsed === "play_music") {
+          deviceProtocolCache.set(targetDevice.device_id, playResult.protocolUsed);
+        }
 
         const displayTitle = `《${book.title}》第${targetChapter.chapter_index}章 ${targetChapter.chapter_title}`;
         logger.info("test-play", `测试播放成功: 音箱已开始播放有声书 ${displayTitle}`, {

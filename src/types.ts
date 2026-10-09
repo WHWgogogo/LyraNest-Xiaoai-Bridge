@@ -168,13 +168,13 @@ export const DEVICE_PROFILES: Record<string, DeviceProfile> = {
   // 标准纯音频机型（非触屏音箱）：走 player_play_url 媒体通道
   L06: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L06A: { playByMusicUrl: false, playbackProtocol: "play_url" },
-  L07A: { playByMusicUrl: false, playbackProtocol: "play_url" },
+  L07A: { playByMusicUrl: true, playbackProtocol: "play_music" },
   L09A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L15A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L16A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L17A: { playByMusicUrl: false, playbackProtocol: "play_url" },
   L17M: { playByMusicUrl: false, playbackProtocol: "play_url" },
-  LX01: { playByMusicUrl: false, playbackProtocol: "play_url" },
+  LX01: { playByMusicUrl: true, playbackProtocol: "play_music" },
   LX06: { playByMusicUrl: false, playbackProtocol: "play_url" },
   OH2: { playByMusicUrl: false, playbackProtocol: "play_url" },
   OH2P: { playByMusicUrl: false, playbackProtocol: "play_url" },
@@ -194,8 +194,39 @@ export function profileFor(hardware?: string): DeviceProfile {
   };
 }
 
-export function isAllwinnerPlayDevice(hardware?: string): boolean {
+export function isAllwinnerPlayDevice(hardware?: string, deviceName?: string): boolean {
+  if (deviceName) {
+    const name = deviceName.toLowerCase();
+    if (name.includes("play") || name.includes("增强版")) {
+      return true;
+    }
+  }
   if (!hardware) return false;
   const hw = hardware.trim().toUpperCase();
   return hw === "L05B" || hw === "L05C" || hw === "L07A" || hw === "LX01";
+}
+
+export function isTouchscreenDevice(hardware?: string, deviceName?: string): boolean {
+  if (deviceName) {
+    const name = deviceName.toLowerCase();
+    if (name.includes("触屏") || name.includes("家庭屏")) {
+      return true;
+    }
+  }
+  if (!hardware) return false;
+  const hw = hardware.trim().toUpperCase();
+  return (
+    hw === "LX04" ||
+    hw.startsWith("X08") ||
+    hw.startsWith("X10") ||
+    hw === "X8F" ||
+    hw === "X4B" ||
+    hw === "X6A" ||
+    hw === "OH11" ||
+    hw === "LX05"
+  );
+}
+
+export function isMustPlayMusicDevice(hardware?: string, deviceName?: string): boolean {
+  return isAllwinnerPlayDevice(hardware, deviceName) || isTouchscreenDevice(hardware, deviceName);
 }

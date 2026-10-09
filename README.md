@@ -107,8 +107,9 @@ QNAP、Synology DSM、绿联 NAS 与铁威马 TOS 7 用户可从 [GitHub 最新�
 - **群晖 DSM**：打开套件中心点击“手动安装”，上传 `.spk` 安装。
 - **绿联 NAS**：在应用中心选择“本地安装”，上传对应架构的 `.upk`。
 - **铁威马 TOS 7**：在应用中心选择“手动安装”，上传对应架构的 `.deb`。
+- **Windows 桌面端 (x64)**：下载 `LyraNest-XiaoAI-Bridge-1.2.1-windows-x64.zip` 解压后双击 `lyranest-xiaoai-bridge.exe` 启动，内置系统托盘图标管理与全套离线运行环境，开箱即用。
 
-安装后均可通过 `http://<NAS_IP>:18090` 访问管理台。
+安装后均可通过 `http://<NAS_IP>:18090`（Windows 本地为 `http://127.0.0.1:18090`）访问管理台。
 
 ---
 

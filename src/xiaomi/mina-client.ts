@@ -1,4 +1,4 @@
-import type { XiaomiTokens, DevicePlayStatus } from "../types.js";
+import { isMustPlayMusicDevice, type XiaomiTokens, type DevicePlayStatus } from "../types.js";
 
 const MINA_API = "https://api2.mina.mi.com";
 const USERPROFILE_API = "https://userprofile.mina.mi.com";
@@ -84,8 +84,10 @@ export class MinaClient {
     url: string,
     protocol: boolean | "auto" | "play_music" | "play_url" = "auto",
     trackId?: string,
+    hardware?: string,
+    deviceName?: string,
   ): Promise<boolean> {
-    const res = await this.playByUrlWithFallback(deviceId, url, protocol, trackId);
+    const res = await this.playByUrlWithFallback(deviceId, url, protocol, trackId, hardware, deviceName);
     return res.ok;
   }
 
@@ -94,10 +96,20 @@ export class MinaClient {
     url: string,
     protocol: boolean | "auto" | "play_music" | "play_url" = "auto",
     trackId?: string,
+    hardware?: string,
+    deviceName?: string,
   ): Promise<{ ok: boolean; protocolUsed: "play_music" | "play_url" }> {
-    const mode = typeof protocol === "boolean"
+    let mode = typeof protocol === "boolean"
       ? (protocol ? "play_music" : "play_url")
       : (protocol || "auto");
+
+    // 全志芯片 Play 系列（L05B、L05C、Play增强版等）以及触屏音箱底层硬件仅支持 player_play_music。
+    // 小米系统针对此类音箱的 ubus 守护进程收到 player_play_url 时，RPC 接口层仍会返回 { code: 0 } 假成功，
+    // 但底层硬件声卡因无流媒体解码通道导致完全静音无声！
+    // 因此对于此类机型，无论传入什么协议或 auto 模式，强制锁定为 play_music，严禁尝试 player_play_url！
+    if (isMustPlayMusicDevice(hardware, deviceName)) {
+      mode = "play_music";
+    }
 
     if (mode === "play_music") {
       const result = await this.ubus(deviceId, "player_play_music", "mediaplayer", playMusicMessage(url, trackId));

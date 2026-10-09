@@ -3,7 +3,7 @@ import { findDevice } from "./xiaomi/device-manager.js";
 import { MinaClient, deriveAudioId } from "./xiaomi/mina-client.js";
 import { withXiaomiSession } from "./xiaomi/with-session.js";
 import { buildStreamUrl } from "./lyranest/url-builder.js";
-import { profileFor, isAllwinnerPlayDevice, type XiaomiDevice, type LyraNestBookChapter, type LyraNestTrack, type LyraNestLibrary, type BridgeConfig } from "./types.js";
+import { profileFor, isAllwinnerPlayDevice, isMustPlayMusicDevice, type XiaomiDevice, type LyraNestBookChapter, type LyraNestTrack, type LyraNestLibrary, type BridgeConfig } from "./types.js";
 import { isHttpUrl } from "./config.js";
 import type { BridgeState } from "./index.js";
 import type { ParsedCommand } from "./voice/command-parser.js";
@@ -942,7 +942,7 @@ export function syncPoller(state: BridgeState): void {
         if (elapsedMs < 6000) continue;
 
         try {
-          const proto = resolvePlaybackProtocol(state.config, dev.hardware, dev.device_id);
+          const proto = resolvePlaybackProtocol(state.config, dev.hardware, dev.device_id, dev.name);
           const useMusicApi = proto === "play_music";
           const playStatus = await withXiaomiSession(
             state,
@@ -1117,11 +1117,12 @@ export function resolvePlaybackProtocol(
   config: BridgeConfig,
   hardware?: string,
   deviceId?: string,
+  deviceName?: string,
 ): "play_music" | "play_url" {
-  if (isAllwinnerPlayDevice(hardware)) {
-    // 全志芯片系列音箱（小爱音箱Play L05B、Play增强版 L05C 等）底层硬件仅支持 play_music，
-    // 固件不支持 player_play_url 媒体通道（下发虽然返回成功但无声或20秒报错退出）。
-    // 强制锁定为 play_music，防止因全局或设备绑定配置误设为 play_url 导致无声。
+  if (isMustPlayMusicDevice(hardware, deviceName)) {
+    // 全志芯片系列音箱（小爱音箱Play L05B、Play增强版 L05C 等）及触屏音箱底层硬件仅支持 play_music，
+    // 固件不支持 player_play_url 媒体通道（下发虽然返回 code=0 假成功但声卡无声或报错退出）。
+    // 强制无条件锁定为 play_music，防止因全局或设备绑定配置误设为 play_url 导致静音。
     return "play_music";
   }
   const binding = deviceId ? config.device_bindings?.[deviceId] : undefined;
@@ -1267,7 +1268,12 @@ export async function playTrack(
     streamUrl = buildStreamUrl(state.config.speaker_base_url, track.id, mediaToken, transcode);
   }
 
-  const preferredProtocol = resolvePlaybackProtocol(state.config, selectedDevice.hardware, selectedDevice.device_id);
+  const preferredProtocol = resolvePlaybackProtocol(
+    state.config,
+    selectedDevice.hardware,
+    selectedDevice.device_id,
+    selectedDevice.name,
+  );
 
   // F2: 记录推送到音箱的曲目标识，供看门狗状态核对
   if (track.id) {
@@ -1293,11 +1299,15 @@ export async function playTrack(
       streamUrl,
       preferredProtocol,
       track.id,
+      selectedDevice.hardware,
+      selectedDevice.name,
     ),
   );
 
   if (playResult.ok) {
-    deviceProtocolCache.set(selectedDevice.device_id, playResult.protocolUsed);
+    if (!isMustPlayMusicDevice(selectedDevice.hardware, selectedDevice.name) || playResult.protocolUsed === "play_music") {
+      deviceProtocolCache.set(selectedDevice.device_id, playResult.protocolUsed);
+    }
     qm.setActive(true);
     deviceAdvanceFailures.delete(selectedDevice.device_id);
     playbackClock.start(

@@ -209,7 +209,7 @@ export class SpatialCoordinator {
 
     // 并发下发各个声道的播放指令
     const playPromises = targetSlots.map(async ({ role, config: slotConfig, device }) => {
-      const preferredProtocol = resolvePlaybackProtocol(state.config, device.hardware, device.device_id);
+      const preferredProtocol = resolvePlaybackProtocol(state.config, device.hardware, device.device_id, device.name);
       const transcode = resolveTranscode(state.config, device.hardware, device.device_id);
       const slotBaseUrl = buildStreamUrl(state.config.speaker_base_url, track.id, mediaToken, transcode);
 
@@ -224,6 +224,8 @@ export class SpatialCoordinator {
           streamUrl,
           preferredProtocol,
           track.id,
+          device.hardware,
+          device.name,
         ),
       );
     });

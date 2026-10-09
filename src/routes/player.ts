@@ -86,10 +86,17 @@ export function playerPlay(state: BridgeState): RouteHandler {
         qm.setQueue(searched, 0, `点播《${body.keyword}》`);
         targetTrack = searched[0];
       } else if (body.url) {
-        const preferredProtocol = resolvePlaybackProtocol(state.config, targetDevice.hardware, targetDevice.device_id);
+        const preferredProtocol = resolvePlaybackProtocol(state.config, targetDevice.hardware, targetDevice.device_id, targetDevice.name);
         const ok = await withXiaomiSession(
           state,
-          (tokens) => new MinaClient(tokens).playByUrl(targetDevice.device_id, body.url!, preferredProtocol),
+          (tokens) => new MinaClient(tokens).playByUrl(
+            targetDevice.device_id,
+            body.url!,
+            preferredProtocol,
+            undefined,
+            targetDevice.hardware,
+            targetDevice.name,
+          ),
         );
         qm.clear();
         if (ok) {

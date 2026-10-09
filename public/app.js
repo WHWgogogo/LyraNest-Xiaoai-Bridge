@@ -372,7 +372,7 @@
             <select class="dev-protocol-select">
               <option value="auto"${(device.playback_protocol || "auto") === "auto" ? " selected" : ""}>自动探测 (生效: ${device.effective_protocol})</option>
               <option value="play_url"${device.playback_protocol === "play_url" ? " selected" : ""}>媒体通道 play_url (标准纯音频音箱)</option>
-              <option value="play_music"${device.playback_protocol === "play_music" ? " selected" : ""}>音乐库协议 play_music (触屏/家庭屏)</option>
+              <option value="play_music"${device.playback_protocol === "play_music" ? " selected" : ""}>音乐库协议 play_music (Play系列/增强版/触屏/家庭屏)</option>
             </select>
           </label>
           <label>
