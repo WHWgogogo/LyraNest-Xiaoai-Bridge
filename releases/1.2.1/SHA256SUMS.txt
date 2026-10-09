@@ -1,0 +1,12 @@
+3f22b73b4cac1ded4dd0a1596dbdd81fb441c45be8754fa6ecf537f8cf78b76b  LyraNest-XiaoAI-Bridge-1.2.1-cwnas.cpk
+de37a119af9fc2b5b5b422e8045f777e20067298faf22f261b906160e77632ba  LyraNest-XiaoAI-Bridge-1.2.1-fnos-native.fpk
+ef50edba82b56d0d0b961874e4ea70fc807f0430ef8cb4481f717a0a5906734f  LyraNest-XiaoAI-Bridge-1.2.1-qnap.qpkg
+80fa492cdb5c03c5ce88baf0638b97d32ae5c776fe5322d35bd626634e205aed  LyraNest-XiaoAI-Bridge-1.2.1-qnap-arm_64.qpkg
+257512c989bf1e04c8a548fc90be25f760dc801acc6a4e6c1c71de5b004b6055  LyraNest-XiaoAI-Bridge-1.2.1-qnap-x86_64.qpkg
+8c1cb611332a0646181ccc42706c058aeb3fdb7ea838aa633fffd42e77807f9d  LyraNest-XiaoAI-Bridge-1.2.1-synology.spk
+024787c77aec36e6b52e38d5a0b511219537ca46e86505f4497f40930c19fb88  LyraNest-XiaoAI-Bridge-1.2.1-synology-armv8.spk
+5cb6e06e63e1195d8acd4612cfc5c2fa35423c42ca2bea82b51c522d28366a8a  LyraNest-XiaoAI-Bridge-1.2.1-synology-x86_64.spk
+f6b48414153188564293b50c184d32e69dcfeb091e57a279d103c7012dd43164  LyraNest-XiaoAI-Bridge-1.2.1-terramaster-aarch64.deb
+bc4ad32d7eff354d3238d1d8eb680fe7dea2e38ebbca9bd4be919fd8ee700629  LyraNest-XiaoAI-Bridge-1.2.1-terramaster-x86_64.deb
+a944a8277b110cbb8f7716b8ee0993c06776c1bdb3a3981e3c8602c4da5d3f79  LyraNest-XiaoAI-Bridge-1.2.1-ugnas-amd64.upk
+908e41f8d1942e5211922fef8b2869016a95769958af84ae7821ceeb6d48bfb6  LyraNest-XiaoAI-Bridge-1.2.1-ugnas-arm64.upk

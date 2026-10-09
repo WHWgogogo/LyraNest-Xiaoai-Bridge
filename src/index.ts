@@ -44,7 +44,7 @@ import {
 } from "./routes/spatial.js";
 import type { XiaomiTokens, XiaomiDevice } from "./types.js";
 
-const VERSION = "1.2.0";
+const VERSION = "1.2.1";
 
 export interface BridgeState {
   version: string;

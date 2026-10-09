@@ -150,6 +150,9 @@
       $("#speakerBaseUrl").value = config.speaker_base_url || "";
       if ($("#bridgeBaseUrl")) {
         $("#bridgeBaseUrl").value = config.bridge_base_url || "";
+        if (window.location.origin && window.location.origin.startsWith("http")) {
+          $("#bridgeBaseUrl").placeholder = window.location.origin;
+        }
       }
       $("#pollInterval").value = String(config.poll_interval_sec || 2);
       $("#searchLimit").value = String(config.search_limit || 10);

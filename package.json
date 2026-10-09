@@ -1,6 +1,6 @@
 {
   "name": "lyranest-xiaoai-bridge",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "XiaoAI smart speaker bridge service for LyraNest",
   "type": "module",
   "main": "dist/index.js",
@@ -11,7 +11,8 @@
     "package:qpkg": "node qpkg/build-qpkg.mjs",
     "package:spk": "node synology/build-spk.mjs",
     "package:terramaster": "node terramaster/build-deb.mjs",
-    "package:ugnas": "node ugnas/build-upk.mjs"
+    "package:ugnas": "node ugnas/build-upk.mjs",
+    "package:cwnas": "node cwnas/build-cpk.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

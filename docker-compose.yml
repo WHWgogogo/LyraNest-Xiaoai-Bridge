@@ -1,11 +1,12 @@
 services:
   xiaoai-bridge:
-    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.2.0
+    image: ghcr.io/whwgogogo/lyranest-xiaoai-bridge:1.2.1
     container_name: lyranest-xiaoai-bridge
     restart: unless-stopped
     mem_limit: 128m
     environment:
       BRIDGE_PORT: "8090"
+      BRIDGE_HOST_PORT: "${BRIDGE_HOST_PORT:-18090}"
       BRIDGE_DATA_DIR: /data
       BRIDGE_ACCESS_TOKEN: "${BRIDGE_ACCESS_TOKEN:-}"
       BRIDGE_RUNTIME: docker

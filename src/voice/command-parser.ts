@@ -103,7 +103,10 @@ export const DEFAULT_COMMANDS: Record<string, string[]> = {
     "继续听书", "接着听书", "听书",
     "有声书",
   ],
-  play: ["播放歌曲", "播放", "放歌", "放一首", "来一首", "我想听"],
+  play: [
+    "播放歌曲", "播放", "放歌", "放一首", "放首", "放首歌", "放个", "来一首", "来首", "我想听", "我要听",
+    "我想听首", "我想听一首", "我要听首", "我要听一首", "播一首", "播首", "播放一首", "放点音乐",
+  ],
 };
 
 export function cleanPunctuation(text: string): string {
@@ -129,8 +132,8 @@ export function cleanKeyword(raw: string): string {
   // Strip surrounding quotes and brackets: 《》, “”, '', 【】, [], (), etc.
   kw = kw.replace(/^([:：\-\s]|《|“|”|"|'|【|\[|\()+/, "");
   kw = kw.replace(/([:：\-\s]|》|“|”|"|'|】|\]|\))+$/, "");
-  // Strip leading action words if any leaked through suffix slicing
-  kw = kw.replace(/^(?:帮我|请|麻烦|我想|给我)?(?:播放|放|听|来)?(?:一下)?(?:我的|我创建的|自定义)?/, "");
+  // Strip leading action words and quantifiers if any leaked through
+  kw = kw.replace(/^(?:帮我|请|麻烦|我想|我要|给我)?(?:播放|放|听|播|来)?(?:一下)?(?:一首|首|一个|个|点|首歌|首歌曲|曲)?(?:我的|我创建的|自定义)?/, "");
   // Strip trailing helper words: 的歌, 里的歌, 的歌曲, 里的歌曲, 的
   kw = kw.replace(/(?:里的歌曲|的歌曲|里的歌|的歌|歌曲|音乐|的)$/, "");
   return cleanPunctuation(kw);
@@ -204,17 +207,25 @@ function buildPlayCommand(rawTarget: string): ParsedCommand {
   const target = cleanPunctuation(rawTarget);
   if (!target) return { action: "play", keyword: "" };
 
+  // Strip leading action words & quantifiers (e.g. "放首", "来一首", "我想听首", "播一首")
+  const stripped = target.replace(
+    /^(?:帮我|请|麻烦|我想|我要|给我)?(?:播放|放|听|播|来)?(?:一下)?(?:一首|首|一个|个|点|首歌|首歌曲|曲)?/,
+    "",
+  ).trim();
+  const effective = stripped || target;
+
   // Check for "{artist} 的 {title}" qualifier (e.g. "周杰伦的晴天", "张学友的吻别", "王菲的如愿", "周蕙的风铃")
   // or "{artist} {title}" with whitespace
-  const qualifierMatch = target.match(/^(.+?)(?:的|\s+)(.+)$/);
+  const qualifierMatch = effective.match(/^(.+?)(?:的|\s+)(.+)$/);
   if (qualifierMatch && qualifierMatch[1] && qualifierMatch[2]) {
     const a = cleanKeyword(qualifierMatch[1]);
     const t = cleanKeyword(qualifierMatch[2]);
     if (a && t) {
-      return { action: "play", keyword: target, artist: a, title: t };
+      return { action: "play", keyword: effective, artist: a, title: t };
     }
   }
-  return { action: "play", keyword: target, title: target };
+  const cleanTitle = cleanKeyword(effective);
+  return { action: "play", keyword: cleanTitle || effective, title: cleanTitle || effective };
 }
 
 function withScope(cmd: ParsedCommand, isWholeHouse: boolean): ParsedCommand {
@@ -249,7 +260,7 @@ export function parseCommand(query: string, config: BridgeConfig): ParsedCommand
   if (/^(?:播放|听|放)?(?:全部歌曲|所有歌曲|全部音乐|所有音乐)$/.test(queryToParse)) {
     return withScope({ action: "library", keyword: "" }, isWholeHouse);
   }
-  if (/^(?:播放歌曲|播放音乐|放歌|放音乐|听歌|听音乐)$/.test(queryToParse)) {
+  if (/^(?:帮我|请|麻烦|我想|我要|给我)?(?:播放|放|听|播|来)?(?:一下)?(?:歌曲|音乐|歌|首歌曲|首歌|首音乐|点歌|点音乐)$/.test(queryToParse)) {
     return withScope({ action: "play_mode", playMode: "shuffle" }, isWholeHouse);
   }
 
@@ -342,15 +353,15 @@ export function parseCommand(query: string, config: BridgeConfig): ParsedCommand
     }
   }
 
-  // 6. Check for Artist patterns: "播放王菲的歌", "听周杰伦的歌曲", "播放五月天所有的歌"
+  // 6. Check for Artist patterns: "播放王菲的歌", "听周杰伦的歌曲", "我想听张学友的", "放周杰伦的"
   const artistMatch = queryToParse.match(
-    /^(?:帮我|请|麻烦|我想|给我)?(?:播放|放|听|来一首|来个|来点)?(?:一下)?(.+?)(?:的所有歌|的全部歌|所有歌|全部歌|的歌曲|的歌|歌曲|歌)$/,
+    /^(?:帮我|请|麻烦|我想|我要|给我)?(?:播放|放|听|播|来一首|来首|来个|来点)?(?:一下)?(.+?)(?:的所有歌|的全部歌|所有歌|全部歌|的歌曲|的歌|歌曲|歌|的)$/,
   );
   if (artistMatch && artistMatch[1]) {
     let rawArtist = artistMatch[1];
     rawArtist = rawArtist.replace(/(?:的所有|的全部|所有|全部)$/, "");
     const cleanArtist = cleanKeyword(rawArtist);
-    if (cleanArtist && !/^(?:我喜欢|收藏|列表|歌单|曲库)$/.test(cleanArtist)) {
+    if (cleanArtist && !/^(?:我喜欢|收藏|列表|歌单|曲库|全部|所有|随便|本地|我要听|我想听|听歌)$/.test(cleanArtist)) {
       return withScope({ action: "artist", keyword: cleanArtist, artist: cleanArtist }, isWholeHouse);
     }
   }

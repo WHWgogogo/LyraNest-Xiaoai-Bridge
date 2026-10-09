@@ -1,3 +1,4 @@
+import { statSync } from "node:fs";
 import { findDevice } from "./xiaomi/device-manager.js";
 import { MinaClient, deriveAudioId } from "./xiaomi/mina-client.js";
 import { withXiaomiSession } from "./xiaomi/with-session.js";
@@ -976,7 +977,7 @@ export function syncPoller(state: BridgeState): void {
             // 仅在歌曲播放前中期（<80% 时长）读到 status=2 时视为人工暂停，【同步冻结时钟】并跳过
             const isNearTrackEnd = trackDurationMs > 0
               ? (elapsedMs >= Math.max(8000, trackDurationMs * 0.8) || (playStatus.position > 0 && playStatus.position >= trackDurationMs - 8000))
-              : elapsedMs >= 20000;
+              : false;
             if (playStatus.status === 2 && !isNearTrackEnd) {
               playbackClock.pause(dev.device_id);
               deviceIdleCounts.delete(dev.device_id);
@@ -988,8 +989,7 @@ export function syncPoller(state: BridgeState): void {
             const lastAudioId = qm.getLastPushedAudioId();
             if (playStatus.status !== 0 && playStatus.audioId && lastAudioId && playStatus.audioId === lastAudioId) {
               const reachedEnd = (trackDurationMs > 0 && playStatus.position >= trackDurationMs - 8000) ||
-                                 (trackDurationMs > 0 && elapsedMs >= trackDurationMs * 0.8) ||
-                                 (trackDurationMs <= 0 && elapsedMs >= 20000);
+                                 (trackDurationMs > 0 && elapsedMs >= trackDurationMs * 0.8);
               if (!reachedEnd) {
                 deviceIdleCounts.delete(dev.device_id);
                 continue;
@@ -1005,9 +1005,11 @@ export function syncPoller(state: BridgeState): void {
               const timeElapsedReached = elapsedMs >= Math.max(6000, trackDurationMs * 0.7);
               isFinished = positionReached || timeElapsedReached;
             } else if (playStatus.status === 0) {
-              isFinished = elapsedMs >= 10000;
+              // 状态为 0 (完全空闲停播) 且至少播了30秒才算播完（避免起播初期的瞬态 0 状态）
+              isFinished = elapsedMs >= 30000;
             } else {
-              isFinished = elapsedMs >= 20000;
+              // 音箱处于非 0 状态且未知时长，不轻率断定播完
+              isFinished = false;
             }
 
             if (!isFinished) continue;
@@ -1116,6 +1118,12 @@ export function resolvePlaybackProtocol(
   hardware?: string,
   deviceId?: string,
 ): "play_music" | "play_url" {
+  if (isAllwinnerPlayDevice(hardware)) {
+    // 全志芯片系列音箱（小爱音箱Play L05B、Play增强版 L05C 等）底层硬件仅支持 play_music，
+    // 固件不支持 player_play_url 媒体通道（下发虽然返回成功但无声或20秒报错退出）。
+    // 强制锁定为 play_music，防止因全局或设备绑定配置误设为 play_url 导致无声。
+    return "play_music";
+  }
   const binding = deviceId ? config.device_bindings?.[deviceId] : undefined;
   if (binding?.playback_protocol && binding.playback_protocol !== "auto") {
     return binding.playback_protocol;
@@ -1156,15 +1164,19 @@ export function resolveBridgeBaseUrl(
   if (config.bridge_base_url && isHttpUrl(config.bridge_base_url)) {
     return config.bridge_base_url.replace(/\/+$/, "");
   }
+  const externalPort = process.env.BRIDGE_HOST_PORT
+    || process.env.BRIDGE_EXTERNAL_PORT
+    || (process.env.BRIDGE_RUNTIME === "docker" ? 18090 : serverPort);
+
   if (config.speaker_base_url && isHttpUrl(config.speaker_base_url)) {
     try {
       const parsed = new URL(config.speaker_base_url);
-      return `${parsed.protocol}//${parsed.hostname}:${serverPort}`;
+      return `${parsed.protocol}//${parsed.hostname}:${externalPort}`;
     } catch {
       // fallback
     }
   }
-  return `http://127.0.0.1:${serverPort}`;
+  return `http://127.0.0.1:${externalPort}`;
 }
 
 export function shouldRelayTranscode(
@@ -1229,7 +1241,23 @@ export async function playTrack(
         track_title: track.title,
         extension: track.extension || "unknown",
       });
-      await state.mediaRelay!.ensureCached(state.config.lyranest_base_url, track.id, mediaToken);
+      const cachedFile = await state.mediaRelay!.ensureCached(state.config.lyranest_base_url, track.id, mediaToken);
+      if ((!track.duration_ms || track.duration_ms <= 0) && cachedFile) {
+        try {
+          const st = statSync(cachedFile);
+          if (st.size > 0) {
+            // LyraNest MP3 转码流固定为 128kbps (16000 字节/秒)
+            track.duration_ms = Math.round((st.size / 16000) * 1000);
+            logger.info("playback", `根据转码缓存文件大小估算曲目时长: ${track.duration_ms}ms`, {
+              track_id: track.id,
+              file_size: st.size,
+              estimated_duration_ms: track.duration_ms,
+            });
+          }
+        } catch {
+          // ignore stat error
+        }
+      }
     } catch (relayErr) {
       logger.warn("playback", `中继缓存预热异常: ${relayErr instanceof Error ? relayErr.message : String(relayErr)}，继续下发中继流`);
     }
